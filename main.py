@@ -2,6 +2,8 @@
 import time
 import board
 import pwmio
+import pulseio
+import simpleio
 from adafruit_motor import servo
 
 def resetto90():
@@ -24,23 +26,86 @@ foot_left = servo.Servo(bot_left)
 foot_right = servo.Servo(bot_right)
 
 
-while True:
-    for angle in range(80, 100, 5):  # 0 - 180 degrees, 5 degrees at a time.
+move1 = True
+move2 = False
+move3 = False
+move4 = False
+move5 = False
+move6 = False
+
+while move1:
+    for angle in range(80, 100, 5):
         leg_left.angle = angle
         leg_right.angle = angle
         time.sleep(0.05)
-    for angle in range(100, 80, -5): # 180 - 0 degrees, 5 degrees at a time.
+    for angle in range(100, 80, -5):
         leg_left.angle = angle
         leg_right.angle =  angle
         time.sleep(0.05)
 
-
-
-    for angle in range(90, 150, 10):  # 0 - 180 degrees, 5 degrees at a time.
+    for angle in range(90, 150, 10):
         foot_left.angle = angle
         foot_right.angle = 180-angle
         time.sleep(0.5)
-    for angle in range(150, 90, -10): # 180 - 0 degrees, 5 degrees at a time.
+    for angle in range(150, 90, -10):
         foot_left.angle = angle
         foot_right.angle = 180-angle
         time.sleep(0.5)
+    time.sleep(3)
+    resetto90()
+    time.sleep(0.05)
+    move1 = False
+
+move2 = True
+while move2:
+
+    for angle in range(90, 50, -10):
+        #foot_left.angle = angle
+        leg_right.angle = angle
+        time.sleep(0.5)
+
+
+
+    for angle in range(90, 20, -10):
+        #foot_left.angle = angle
+        foot_right.angle = 180-angle
+        time.sleep(0.5)
+    for angle in range(150, 90, -60):
+        foot_left.angle = angle
+        time.sleep(0.5)
+
+    for angle in range(20, 90, 10):
+        #foot_left.angle = angle
+        foot_right.angle = 180-angle
+        time.sleep(0.5)
+
+    for angle in range(50, 90, 10):
+        #leg_left.angle = angle
+        leg_right.angle =  angle
+        time.sleep(0.5)
+        resetto90()
+        time.sleep(1)
+        move2= False
+
+# Define pin connected to piezo buzzer.
+PIEZO_PIN = board.A1
+
+# Define a list of tones/music notes to play.
+TONE_FREQ = [ 262,  # C4
+              294,  # D4
+              330,  # E4
+              349,  # F4
+              392,  # G4
+              440,  # A4
+              494 ] # B4
+
+
+# Main loop will go through each tone in order up and down.
+while True:
+    # Play tones going from start to end of list.
+    for i in range(len(TONE_FREQ)):
+        simpleio.tone(PIEZO_PIN, TONE_FREQ[i], duration=0.5)
+    # Then play tones going from end to start of list.
+    for i in range(len(TONE_FREQ)-1, -1, -1):
+        simpleio.tone(PIEZO_PIN, TONE_FREQ[i], duration=0.5)
+        time.sleep(1000)
