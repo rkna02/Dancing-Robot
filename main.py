@@ -28,12 +28,14 @@ foot_right = servo.Servo(bot_right)
 
 
 move1 = False
-move2 = True
+move2 = False
 move3 = False
-move4 = False
+move4 = True
 move5 = False
 move6 = False
 music = False
+
+count = 0
 
 while move1:
     for angle in range(80, 100, 5):
@@ -48,16 +50,19 @@ while move1:
     for angle in range(90, 150, 10):
         foot_left.angle = angle
         foot_right.angle = 180-angle
-        time.sleep(0.5)
+        time.sleep(0.1)
     for angle in range(150, 90, -10):
         foot_left.angle = angle
         foot_right.angle = 180-angle
-        time.sleep(0.5)
-    time.sleep(3)
+        time.sleep(0.1)
     resetto90()
     time.sleep(0.05)
-    move1 = False
-
+    count=count+1
+    if count == 3:
+        move1 = False
+        
+time.sleep(1)
+count = 0
 while move2:
     resetto90()
     
@@ -70,18 +75,18 @@ while move2:
         time.sleep(0.05)        
     #  \\
     
-    time.sleep(1)
+    time.sleep(0.1)
     foot_right.angle = 120 #lift up outward
     time.sleep(1)
     leg_right.angle =  32 #kick
-    time.sleep(1)
+    time.sleep(0.1)
     
-    for angle in range(102, 32, -4):# shake
+    for angle in range(32, 102, 3):# shake
         leg_right.angle =  angle
-        time.sleep(0.05)
-    for angle in range(32, 102, 4):# shake
+        time.sleep(0.01)
+    for angle in range(102, 32, -3):# shake
         leg_right.angle =  angle
-        time.sleep(0.05)
+        time.sleep(0.01)
     resetto90()
     time.sleep(0.5)
     
@@ -96,26 +101,93 @@ while move2:
         time.sleep(0.05)        
     #  //
     
-    time.sleep(1)
+    time.sleep(0.1)
     foot_left.angle = 50 #lift up outward
     time.sleep(1)
-    leg_left.angle =  122 #kick
-    time.sleep(1)
+    leg_left.angle =  152 #kick
+    time.sleep(0.1)
     
-    for angle in range(122, 152, 4):# shake
+    for angle in range(152, 82, -3):# shake
         leg_left.angle =  angle
-        time.sleep(0.05)
-    for angle in range(152, 90, -4):# shake
+        time.sleep(0.01)
+    for angle in range(82, 152, 3):# shake
         leg_left.angle =  angle
-        time.sleep(0.05)
+        time.sleep(0.01)
         
     resetto90()
+    time.sleep(0.5)
     
+    count=count+1
+    if count == 3:
+        move2 = False
     
+
+while move3:
     
+    resetto90()
+    for angle in range(102, 41, -4):# turn right leg
+        leg_right.angle =  angle
+        time.sleep(0.05)
+    for angle in range(90, 159, 4):# turn left leg
+        leg_left.angle =  angle
+        time.sleep(0.05)
+    for i in range(5):      
+        for angle in range(90, 120, 5):
+            foot_left.angle = angle
+            foot_right.angle = angle
+            time.sleep(0.05)
+        for angle in range(120, 60, -5):
+            foot_left.angle = angle
+            foot_right.angle = angle
+            time.sleep(0.05)
+        for angle in range(60, 90, 5):
+            foot_left.angle = angle
+            foot_right.angle = angle
+            time.sleep(0.05)
+        
+    resetto90()
     time.sleep(1000)
+count4=0
+while move4:
+    resetto90()
+    time.sleep(0.5)
+    
+    #right up
+    for angle in range(90, 10, -39):
+        foot_right.angle = angle
+        time.sleep(0.05)
+    for angle in range(92, 32, -19):
+        foot_left.angle = angle
+        time.sleep(0.05)        
+    #  \\
+    
+    time.sleep(0.1)
+    foot_right.angle = 120 #lift up outward
+    time.sleep(1)
+    leg_right.angle =  32 #kick
+    time.sleep(0.1)
+    
 
-
+    for angle in range(90, 30, -3):
+        leg_left.angle =  angle
+        time.sleep(0.05)
+    for angle in range(32, 102, 3):
+        leg_right.angle =  angle
+        time.sleep(0.05)
+    for angle in range(32, 92, 19):
+        foot_left.angle = angle
+        time.sleep(0.05)
+    for angle in range(120, 89, -10):
+        foot_right.angle = angle
+        time.sleep(0.05)
+    for angle in range(30, 90, 3):
+        leg_left.angle =  angle
+        time.sleep(0.05)
+    
+    count=count+1
+    if(count == 2):
+        move4 = False
+        resetto90()
 
 #muisc
 
