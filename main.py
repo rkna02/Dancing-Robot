@@ -42,11 +42,11 @@ music = False
 count = 0
 
 while move1:
-    for angle in range(80, 100, 5):
+    for angle in range(80, 101, 5):
         leg_left.angle = angle
         leg_right.angle = angle
         time.sleep(0.05)
-    for angle in range(100, 80, -5):
+    for angle in range(101, 80, -5):
         leg_left.angle = angle
         leg_right.angle =  angle
         time.sleep(0.05)
@@ -73,10 +73,10 @@ while move2:
     resetto90()
     
     #right foot up
-    for angle in range(90, 10, -39):
+    for angle in range(cfootr, 10, -39):
         foot_right.angle = angle
         time.sleep(0.05)
-    for angle in range(92, 32, -19):
+    for angle in range(cfootl, 32, -19):
         foot_left.angle = angle
         time.sleep(0.05)        
     #  \\
@@ -87,10 +87,10 @@ while move2:
     leg_right.angle =  32 #kick
     time.sleep(0.1)
     
-    for angle in range(32, 102, 3):# shake
+    for angle in range(32, clegl, 3):# shake
         leg_right.angle =  angle
         time.sleep(0.01)
-    for angle in range(102, 32, -3):# shake
+    for angle in range(clegl, 32, -3):# shake
         leg_right.angle =  angle
         time.sleep(0.01)
     resetto90()
@@ -98,10 +98,10 @@ while move2:
     
 #--------------------
     #left foot up    
-    for angle in range(92, 172, 39):
+    for angle in range(cfootl, 172, 39):
         foot_left.angle = angle
         time.sleep(0.05)
-    for angle in range(90, 150, 19):
+    for angle in range(cfootr, 150, 19):
         foot_right.angle = angle
         time.sleep(0.05)        
     #  //
@@ -129,10 +129,10 @@ while move2:
 while move3:
     
     resetto90()
-    for angle in range(102, 41, -4):# turn right leg
+    for angle in range(clegr, 41, -4):# turn right leg
         leg_right.angle =  angle
         time.sleep(0.05)
-    for angle in range(90, 159, 4):# turn left leg
+    for angle in range(clegl, 159, 4):# turn left leg
         leg_left.angle =  angle
         time.sleep(0.05)
     for i in range(5):      
@@ -159,10 +159,10 @@ while move4:
     time.sleep(0.5)
     
     #right up
-    for angle in range(90, 10, -39):
+    for angle in range(cfootr, 10, -39):
         foot_right.angle = angle
         time.sleep(0.05)
-    for angle in range(92, 32, -19):
+    for angle in range(cfootl, 32, -19):
         foot_left.angle = angle
         time.sleep(0.05)        
     #  \\
@@ -174,19 +174,19 @@ while move4:
     time.sleep(0.1)
     
 
-    for angle in range(90, 30, -3):
+    for angle in range(clegl, 30, -3):
         leg_left.angle =  angle
         time.sleep(0.05)
-    for angle in range(32, 102, 3):
+    for angle in range(32, clegr, 3):
         leg_right.angle =  angle
         time.sleep(0.05)
-    for angle in range(32, 92, 19):
+    for angle in range(32, cfootl+1, 10):
         foot_left.angle = angle
         time.sleep(0.05)
-    for angle in range(120, 89, -10):
+    for angle in range(120, cfootr-1, -10):
         foot_right.angle = angle
         time.sleep(0.05)
-    for angle in range(30, 90, 3):
+    for angle in range(30, clegl+1, 3):
         leg_left.angle =  angle
         time.sleep(0.05)
     
