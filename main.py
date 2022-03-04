@@ -224,20 +224,26 @@ while move5:
     
 while move6:
     resetto90()
+    time.sleep(1000)
     for i in range(10):
         leg_right.angle = leg_right.angle - 4
         foot_right.angle = foot_right.angle + 4        
     for i in range(10):
-        leg_right.angle = leg_right.angle + 4
-        foot_right.angle = foot_right.angle - 4
+        leg_right.angle = leg_right.angle + 8
+        foot_right.angle = foot_right.angle - 8
+    for i in range(10):
+        leg_right.angle = leg_right.angle - 4
+        foot_right.angle = foot_right.angle + 4
         
     for i in range(20):
         leg_left.angle = leg_left.angle + 2
         foot_left.angle = foot_left.angle - 2
     for i in range(20):
-        leg_left.angle = leg_left.angle - 2
-        foot_left.angle = foot_left.angle + 2
-        
+        leg_left.angle = leg_left.angle - 4
+        foot_left.angle = foot_left.angle + 4
+    for i in range(20):
+        leg_left.angle = leg_left.angle + 4
+        foot_left.angle = foot_left.angle -2
 
 #muisc
 
