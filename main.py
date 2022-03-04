@@ -5,13 +5,17 @@ import pulseio
 import simpleio
 from adafruit_motor import servo
 
+#define correct center angles:
+clegl = 90
+clegr = 102
+cfootl = 92
+cfootr = 90 #not used in moves yet, test later
 
 def resetto90():
-    leg_left.angle = 90
-    leg_right.angle = 102
-    foot_left.angle = 92
-    foot_right.angle = 90
-
+    leg_left.angle = clegl
+    leg_right.angle = clegr
+    foot_left.angle = cfootl
+    foot_right.angle = cfootr
 
 # create a PWMOut object on Pin D9-12.
 bot_left = pwmio.PWMOut(board.D9, duty_cycle=2 ** 15, frequency=50)
@@ -26,7 +30,7 @@ foot_left = servo.Servo(bot_left)
 foot_right = servo.Servo(bot_right)
 
 
-
+#dance moves
 move1 = False
 move2 = False
 move3 = False
@@ -62,11 +66,13 @@ while move1:
         move1 = False
         
 time.sleep(1)
+
+#-------------------------------------------------
 count = 0
 while move2:
     resetto90()
     
-    #right up
+    #right foot up
     for angle in range(90, 10, -39):
         foot_right.angle = angle
         time.sleep(0.05)
@@ -91,8 +97,7 @@ while move2:
     time.sleep(0.5)
     
 #--------------------
-
-    #left up    
+    #left foot up    
     for angle in range(92, 172, 39):
         foot_left.angle = angle
         time.sleep(0.05)
@@ -113,7 +118,6 @@ while move2:
     for angle in range(82, 152, 3):# shake
         leg_left.angle =  angle
         time.sleep(0.01)
-        
     resetto90()
     time.sleep(0.5)
     
@@ -121,7 +125,7 @@ while move2:
     if count == 3:
         move2 = False
     
-
+#-------------------------------------------------
 while move3:
     
     resetto90()
@@ -147,6 +151,8 @@ while move3:
         
     resetto90()
     time.sleep(1000)
+    
+#-------------------------------------------------
 count4=0
 while move4:
     resetto90()
@@ -189,6 +195,7 @@ while move4:
         move4 = False
         resetto90()
 
+#-------------------------------------------------
 #muisc
 
 # Define pin connected to piezo buzzer.
