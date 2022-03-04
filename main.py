@@ -5,17 +5,13 @@ import pulseio
 import simpleio
 from adafruit_motor import servo
 
-#define correct center angles:
-clegl = 90
-clegr = 102
-cfootl = 92
-cfootr = 90 #not used in moves yet, test later
 
 def resetto90():
-    leg_left.angle = clegl
-    leg_right.angle = clegr
-    foot_left.angle = cfootl
-    foot_right.angle = cfootr
+    leg_left.angle = 90
+    leg_right.angle = 102
+    foot_left.angle = 92
+    foot_right.angle = 90
+
 
 # create a PWMOut object on Pin D9-12.
 bot_left = pwmio.PWMOut(board.D9, duty_cycle=2 ** 15, frequency=50)
@@ -30,23 +26,23 @@ foot_left = servo.Servo(bot_left)
 foot_right = servo.Servo(bot_right)
 
 
-#dance moves
+
 move1 = False
 move2 = False
 move3 = False
-move4 = True
+move4 = False
 move5 = False
-move6 = False
+move6 = True
 music = False
 
 count = 0
 
 while move1:
-    for angle in range(80, 101, 5):
+    for angle in range(80, 100, 5):
         leg_left.angle = angle
         leg_right.angle = angle
         time.sleep(0.05)
-    for angle in range(101, 80, -5):
+    for angle in range(100, 80, -5):
         leg_left.angle = angle
         leg_right.angle =  angle
         time.sleep(0.05)
@@ -64,78 +60,78 @@ while move1:
     count=count+1
     if count == 3:
         move1 = False
-        
-time.sleep(1)
 
-#-------------------------------------------------
+time.sleep(1)
 count = 0
 while move2:
     resetto90()
-    
-    #right foot up
-    for angle in range(cfootr, 10, -39):
+
+    #right up
+    for angle in range(90, 10, -39):
         foot_right.angle = angle
         time.sleep(0.05)
-    for angle in range(cfootl, 32, -19):
+    for angle in range(92, 32, -19):
         foot_left.angle = angle
-        time.sleep(0.05)        
+        time.sleep(0.05)
     #  \\
-    
+
     time.sleep(0.1)
     foot_right.angle = 120 #lift up outward
     time.sleep(1)
     leg_right.angle =  32 #kick
     time.sleep(0.1)
-    
-    for angle in range(32, clegl, 3):# shake
+
+    for angle in range(32, 102, 3):# shake
         leg_right.angle =  angle
         time.sleep(0.01)
-    for angle in range(clegl, 32, -3):# shake
+    for angle in range(102, 32, -3):# shake
         leg_right.angle =  angle
         time.sleep(0.01)
     resetto90()
     time.sleep(0.5)
-    
+
 #--------------------
-    #left foot up    
-    for angle in range(cfootl, 172, 39):
+
+    #left up
+    for angle in range(92, 172, 39):
         foot_left.angle = angle
         time.sleep(0.05)
-    for angle in range(cfootr, 150, 19):
+    for angle in range(90, 150, 19):
         foot_right.angle = angle
-        time.sleep(0.05)        
+        time.sleep(0.05)
     #  //
-    
+
     time.sleep(0.1)
     foot_left.angle = 50 #lift up outward
     time.sleep(1)
     leg_left.angle =  152 #kick
     time.sleep(0.1)
-    
+
     for angle in range(152, 82, -3):# shake
         leg_left.angle =  angle
         time.sleep(0.01)
     for angle in range(82, 152, 3):# shake
         leg_left.angle =  angle
         time.sleep(0.01)
+
     resetto90()
     time.sleep(0.5)
-    
+
     count=count+1
     if count == 3:
         move2 = False
-    
-#-------------------------------------------------
+
+
 while move3:
-    
+
     resetto90()
-    for angle in range(clegr, 41, -4):# turn right leg
+    for angle in range(102, 41, -4):# turn right leg
         leg_right.angle =  angle
         time.sleep(0.05)
-    for angle in range(clegl, 159, 4):# turn left leg
+    for angle in range(90, 159, 4):# turn left leg
         leg_left.angle =  angle
         time.sleep(0.05)
-    for i in range(5):      
+    for i in range(5):
         for angle in range(90, 120, 5):
             foot_left.angle = angle
             foot_right.angle = angle
@@ -148,54 +144,101 @@ while move3:
             foot_left.angle = angle
             foot_right.angle = angle
             time.sleep(0.05)
-        
+
     resetto90()
     time.sleep(1000)
-    
-#-------------------------------------------------
 count4=0
 while move4:
     resetto90()
     time.sleep(0.5)
-    
+
     #right up
-    for angle in range(cfootr, 10, -39):
+    for angle in range(90, 10, -39):
         foot_right.angle = angle
         time.sleep(0.05)
-    for angle in range(cfootl, 32, -19):
+    for angle in range(92, 32, -19):
         foot_left.angle = angle
-        time.sleep(0.05)        
+        time.sleep(0.05)
     #  \\
-    
+
     time.sleep(0.1)
     foot_right.angle = 120 #lift up outward
     time.sleep(1)
     leg_right.angle =  32 #kick
     time.sleep(0.1)
-    
 
-    for angle in range(clegl, 30, -3):
+
+    for angle in range(90, 30, -3):
         leg_left.angle =  angle
         time.sleep(0.05)
-    for angle in range(32, clegr, 3):
+    for angle in range(32, 102, 3):
         leg_right.angle =  angle
         time.sleep(0.05)
-    for angle in range(32, cfootl+1, 10):
+    for angle in range(32, 92, 19):
         foot_left.angle = angle
         time.sleep(0.05)
-    for angle in range(120, cfootr-1, -10):
+    for angle in range(120, 89, -10):
         foot_right.angle = angle
         time.sleep(0.05)
-    for angle in range(30, clegl+1, 3):
+    for angle in range(30, 90, 3):
         leg_left.angle =  angle
         time.sleep(0.05)
-    
+
     count=count+1
     if(count == 2):
         move4 = False
         resetto90()
+        
+while move5:
+    resetto90()
+    # 开合
+    for i in range (5):
+        for i in range (10):
+            leg_left.angle = leg_left.angle + 3
+            leg_right.angle = leg_right.angle - 3
+            foot_right.angle = foot_right.angle + 3
+            foot_left.angle = foot_left.angle - 3
+            time.sleep(0.01)
+        for i in range (10):
+            leg_left.angle = leg_left.angle - 3
+            leg_right.angle = leg_right.angle + 3    
+            foot_right.angle = foot_right.angle - 3
+            foot_left.angle = foot_left.angle + 3
+            time.sleep(0.01)
+        resetto90()
+    #左右
+    for i in range (5):
+        for i in range (20):
+            leg_left.angle = leg_left.angle - 2
+            leg_right.angle = leg_right.angle - 2
+            time.sleep(0.005)
+        for i in range (21):
+            leg_left.angle = leg_left.angle + 4
+            leg_right.angle = leg_right.angle + 4
+            time.sleep(0.01)
+        for i in range (20):
+            leg_left.angle = leg_left.angle - 2
+            leg_right.angle = leg_right.angle - 2
+            time.sleep(0.005)
+    move5 = False
+    
+while move6:
+    resetto90()
+    for i in range(10):
+        leg_right.angle = leg_right.angle - 4
+        foot_right.angle = foot_right.angle + 4        
+    for i in range(10):
+        leg_right.angle = leg_right.angle + 4
+        foot_right.angle = foot_right.angle - 4
+        
+    for i in range(20):
+        leg_left.angle = leg_left.angle + 2
+        foot_left.angle = foot_left.angle - 2
+    for i in range(20):
+        leg_left.angle = leg_left.angle - 2
+        foot_left.angle = foot_left.angle + 2
+        
 
-#-------------------------------------------------
 #muisc
 
 # Define pin connected to piezo buzzer.
@@ -332,7 +375,7 @@ divider = 0
 noteDuration = 0
 while music:
     time.sleep(1000)
-    
+
     # iterate over the notes of the melody.
     # Remember, the array is twice the number of notes (notes + durations)
     for i in range (0,notes*2,2):
@@ -341,7 +384,7 @@ while music:
         divider = melody[i + 1]
           # regular note, just proceed
         noteDuration = (wholenote) / divider
-      
+
         #we only play the note for 90% of the duration, leaving 10% as a pause
         simpleio.tone(PIEZO_PIN, melody[i], duration = noteDuration)
 
