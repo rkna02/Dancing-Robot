@@ -33,14 +33,20 @@ while True:
             elif pressed_keys == [6]:  # press 1 then 1 to show dance move 3
                 move6 = True;
         time.sleep(1)
+        
     elif keys == [2]:
         time.sleep(0.5)
         while True:
             keys = keypad.pressed_keys
             if pressed_keys = [1]:  # press 1 to start showing all dance moves
-            
+                move1 = True;
+                move2 = True;
+                move3 = True;
+                move4 = True;
+                move5 = True;
+                move6 = True;
         time.sleep(1)
-    elif pressed_keys is [4] or keys is [5]:
-        show_text(splash, "please enter a valid number")
-    show_text(splash, "press 1 to enter menu1\n press 2 to enter menu2")
+        
+    elif (keys == [3] or keys == [4] or keys == [5] or keys == [6] or keys == [7] or keys == [8] or keys == [9]):
+        # show error message if pressed
     time.sleep(1)
