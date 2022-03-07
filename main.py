@@ -30,8 +30,8 @@ leg_right = servo.Servo(top_right)
 foot_left = servo.Servo(bot_left)
 foot_right = servo.Servo(bot_right)
 
-move1 = False
-move2 = False
+move1 = True
+move2 = True
 move3 = False
 move4 = False
 move5 = False
@@ -182,45 +182,44 @@ while move1:
         simpleio.tone(PIEZO_PIN, melody1[i], 0.05)
     resetto90()
 
-    time = 0
+    t = 0
     for angle in range(90, 150, 6):
         foot_left.angle = angle
         foot_right.angle = 180-angle
-        if time < 0.25:
+        if t < 0.25:
             j = i+2
             simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
-            time = time + 0.05
+            t = t + 0.05
         else:
             j= i+4
             simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
-            time = time + 0.05
+            t = t + 0.05
 
-    time = 0
+    t = 0
     for angle in range(150, 90, -6):
         foot_left.angle = angle
         foot_right.angle = 180-angle
 
-        if time < 0.25:
+        if t < 0.25:
             j= i+6
             simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
-            time = time + 0.05
+            t = t + 0.05
         else:
             j= i+8
             simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
-            time = time + 0.05
+            t = t + 0.05
     i = j
     resetto90()
     i = i+2
     simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1])
     i = i+2
     simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1])
+    
     count=count+1
-
     if count == 3:
-        for i in range(i+2,len(melody1)/2,2):
-            simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1])
-
-time.sleep(1)
+        for a in range(i+2,len(melody1), 2):
+            simpleio.tone(PIEZO_PIN, melody1[a], tempo/melody1[a+1])
+        move1 = False
 
 #-----------------------------------------------------
 #move2
@@ -286,11 +285,11 @@ while move2:
     leg_left.angle =  143 #kick
     time.sleep(0.1)
     i = i+2
-    for angle in range(143, 82, -3):# shake
+    for angle in range(143, 82, -6):# shake
         leg_left.angle =  angle
         simpleio.tone(PIEZO_PIN, melody2[i], 0.05)
     i = i+2
-    for angle in range(82, 143, 3):# shake
+    for angle in range(82, 143, 6):# shake
         leg_left.angle =  angle
         simpleio.tone(PIEZO_PIN, melody2[i], 0.05)
 
@@ -298,7 +297,7 @@ while move2:
     simpleio.tone(PIEZO_PIN, melody2[i], 0.5)
 
     count=count+1
-    if count == 1:
+    if count == 2:
         move2 = False
 
 
