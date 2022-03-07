@@ -30,13 +30,15 @@ leg_right = servo.Servo(top_right)
 foot_left = servo.Servo(bot_left)
 foot_right = servo.Servo(bot_right)
 
-move1 = True
+move1 = False
 move2 = False
 move3 = False
 move4 = False
 move5 = False
 move6 = False
-music = False
+move6 = False
+
+resetto90()
 
 count = 0
 
@@ -166,13 +168,15 @@ melody2 = [NOTE_C5,4,
 
 i = 0
 while move1:
+    if count!=0:
+        i=i+2
     resetto90()
-    for angle in range(60, 120, 10):
+    for angle in range(60, 120, 6):
         leg_left.angle = angle
         leg_right.angle = angle
         simpleio.tone(PIEZO_PIN, melody1[i], 0.05)
-    i = i+2 
-    for angle in range(120, 60, -10):
+    i = i+2
+    for angle in range(120, 60, -6):
         leg_left.angle = angle
         leg_right.angle =  angle
         simpleio.tone(PIEZO_PIN, melody1[i], 0.05)
@@ -207,11 +211,11 @@ while move1:
     i = j
     resetto90()
     i = i+2
-    simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1]) 
+    simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1])
     i = i+2
-    simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1]) 
+    simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1])
     count=count+1
-    
+
     if count == 3:
         for i in range(i+2,len(melody1)/2,2):
             simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1])
@@ -219,8 +223,8 @@ while move1:
 time.sleep(1)
 
 #-----------------------------------------------------
-#move2 
-
+#move2
+i = 0
 count = 0
 while move2:
     resetto90()
@@ -228,56 +232,73 @@ while move2:
     #right up
     for angle in range(cfootr, cfootr-81, -40):
         foot_right.angle = angle
-        time.sleep(0.05)
+        simpleio.tone(PIEZO_PIN, melody2[i], 0.05)
     for angle in range(cfootl, cfootl-61, -20):
         foot_left.angle = angle
-        time.sleep(0.05)
+        simpleio.tone(PIEZO_PIN, melody2[i], 0.05)
     #  \\
 
-    time.sleep(0.1)
+    simpleio.tone(PIEZO_PIN, melody2[i], 0.25)
     foot_right.angle = 124 #lift up outward
-    time.sleep(1)
+    i = i+2
+    simpleio.tone(PIEZO_PIN, melody2[i], 0.5)
+    i = i+2
+    simpleio.tone(PIEZO_PIN, melody2[i], 0.5)
     leg_right.angle =  32 #kick
     time.sleep(0.1)
-
-    for angle in range(32, 102, 3):# shake
+    i = i+2
+    for angle in range(32, 93, 6):# shake
         leg_right.angle =  angle
-        time.sleep(0.01)
-    for angle in range(102, 32, -3):# shake
+        simpleio.tone(PIEZO_PIN, melody2[i], 0.05)
+    i = i+2
+    for angle in range(93, 32, -6):# shake
         leg_right.angle =  angle
-        time.sleep(0.01)
+        simpleio.tone(PIEZO_PIN, melody2[i], 0.05)
     resetto90()
-    time.sleep(0.5)
+    if count == 0:
+        simpleio.tone(PIEZO_PIN, melody2[i], 0.5)
+    elif count ==1:
+        i = i+2
+        simpleio.tone(PIEZO_PIN, melody2[i], 0.5)
 
 #--------------------
 
     #left up
+    i = i+2
     for angle in range(cfootl, cfootl+81, 40):
         foot_left.angle = angle
-        time.sleep(0.05)
+        simpleio.tone(PIEZO_PIN, melody2[i], 0.05)
     for angle in range(cfootr, cfootr+61, 20):
         foot_right.angle = angle
-        time.sleep(0.05)
+        simpleio.tone(PIEZO_PIN, melody2[i], 0.05)
+        
     #  //
-
-    time.sleep(0.1)
+    if count == 0:
+        simpleio.tone(PIEZO_PIN, melody2[i], 0.25)
+    elif count == 1:
+        i = i+2
+        simpleio.tone(PIEZO_PIN, melody2[i], 0.25)
     foot_left.angle = 50 #lift up outward
-    time.sleep(1)
-    leg_left.angle =  152 #kick
+    i = i+2
+    simpleio.tone(PIEZO_PIN, melody2[i], 0.5)
+    i = i+2
+    simpleio.tone(PIEZO_PIN, melody2[i], 0.5)
+    leg_left.angle =  143 #kick
     time.sleep(0.1)
-
-    for angle in range(152, 82, -3):# shake
+    i = i+2
+    for angle in range(143, 82, -3):# shake
         leg_left.angle =  angle
-        time.sleep(0.01)
-    for angle in range(82, 152, 3):# shake
+        simpleio.tone(PIEZO_PIN, melody2[i], 0.05)
+    i = i+2
+    for angle in range(82, 143, 3):# shake
         leg_left.angle =  angle
-        time.sleep(0.01)
+        simpleio.tone(PIEZO_PIN, melody2[i], 0.05)
 
     resetto90()
-    time.sleep(0.5)
+    simpleio.tone(PIEZO_PIN, melody2[i], 0.5)
 
     count=count+1
-    if count == 3:
+    if count == 1:
         move2 = False
 
 
@@ -347,7 +368,7 @@ while move4:
     if(count == 2):
         move4 = False
         resetto90()
-        
+
 while move5:
     resetto90()
     # 开合
@@ -360,7 +381,7 @@ while move5:
             time.sleep(0.01)
         for i in range (10):
             leg_left.angle = leg_left.angle - 3
-            leg_right.angle = leg_right.angle + 3    
+            leg_right.angle = leg_right.angle + 3
             foot_right.angle = foot_right.angle - 3
             foot_left.angle = foot_left.angle + 3
             time.sleep(0.01)
@@ -380,20 +401,19 @@ while move5:
             leg_right.angle = leg_right.angle - 2
             time.sleep(0.005)
     move5 = False
-    
+
 while move6:
     resetto90()
-    time.sleep(1000)
     for i in range(10):
         leg_right.angle = leg_right.angle - 4
-        foot_right.angle = foot_right.angle + 4        
+        foot_right.angle = foot_right.angle + 4
     for i in range(10):
         leg_right.angle = leg_right.angle + 8
         foot_right.angle = foot_right.angle - 8
     for i in range(10):
         leg_right.angle = leg_right.angle - 4
         foot_right.angle = foot_right.angle + 4
-        
+
     for i in range(20):
         leg_left.angle = leg_left.angle + 2
         foot_left.angle = foot_left.angle - 2
@@ -403,15 +423,3 @@ while move6:
     for i in range(20):
         leg_left.angle = leg_left.angle + 4
         foot_left.angle = foot_left.angle -2
-
-
-
-#sizeof gives the number of bytes, each int value is composed of two bytes (16 bits)
-#there are two values per note (pitch and duration), so for each note there are four bytes
-notes = len(melody)/2
-
-# this calculates the duration of a whole note in ms
-wholenote = (60* 4) / tempo
-
-divider = 0
-noteDuration = 0
