@@ -100,7 +100,7 @@ REST     = 0
 # change this to make the song slower or faster
 tempo = 200
 
-melody = [NOTE_C5,4,
+melody1 = [NOTE_C5,4,
   NOTE_F5,4, NOTE_F5,8, NOTE_G5,8, NOTE_F5,8, NOTE_E5,8,
   NOTE_D5,4, NOTE_D5,4, NOTE_D5,4,
   NOTE_G5,4, NOTE_G5,8, NOTE_A5,8, NOTE_G5,8, NOTE_F5,8,
@@ -108,43 +108,44 @@ melody = [NOTE_C5,4,
   NOTE_A5,4, NOTE_A5,8, NOTE_AS5,8, NOTE_A5,8, NOTE_G5,8,
   NOTE_F5,4, NOTE_D5,4, NOTE_C5,8, NOTE_C5,8,
   NOTE_D5,4, NOTE_G5,4, NOTE_E5,4,
-
-  NOTE_F5,2, NOTE_C5,4,
-  NOTE_F5,4, NOTE_F5,8, NOTE_G5,8, NOTE_F5,8, NOTE_E5,8,
-  NOTE_D5,4, NOTE_D5,4, NOTE_D5,4,
-  NOTE_G5,4, NOTE_G5,8, NOTE_A5,8, NOTE_G5,8, NOTE_F5,8,
-  NOTE_E5,4, NOTE_C5,4, NOTE_C5,4,
-  NOTE_A5,4, NOTE_A5,8, NOTE_AS5,8, NOTE_A5,8, NOTE_G5,8,
-  NOTE_F5,4, NOTE_D5,4, NOTE_C5,8, NOTE_C5,8,
+  NOTE_F5,2
+] #12s
+melody2 = [NOTE_C5,4,
+  NOTE_F5,4, NOTE_F5,4, NOTE_F5,4,
+  NOTE_E5,2, NOTE_E5,4,
+  NOTE_F5,4, NOTE_E5,4, NOTE_D5,4,
+  NOTE_C5,2, NOTE_A5,4,
+  NOTE_AS5,4, NOTE_A5,4, NOTE_G5,4,
+  NOTE_C6,4, NOTE_C5,4, NOTE_C5,8, NOTE_C5,8,
   NOTE_D5,4, NOTE_G5,4, NOTE_E5,4,
-  NOTE_F5,2, NOTE_C5,4
+  NOTE_F5,2
 ]
 
-#sizeof gives the number of bytes, each int value is composed of two bytes (16 bits)
-#there are two values per note (pitch and duration), so for each note there are four bytes
-notes = len(melody)/2
+# #sizeof gives the number of bytes, each int value is composed of two bytes (16 bits)
+# #there are two values per note (pitch and duration), so for each note there are four bytes
+# notes = len(melody)/2
 
-# this calculates the duration of a whole note in ms
-wholenote = (60* 4) / tempo
+# # this calculates the duration of a whole note in ms
+# wholenote = (60* 4) / tempo
 
-divider = 0
-noteDuration = 0
-music = True
-while music:
-# def play_music():
-  time.sleep(1000)
+# divider = 0
+# noteDuration = 0
+# music = True
+# while music:
+# # def play_music():
+#   time.sleep(1000)
     
-  # iterate over the notes of the melody.
-  # Remember, the array is twice the number of notes (notes + durations)
-  for i in range (0,notes*2,2):
+#   # iterate over the notes of the melody.
+#   # Remember, the array is twice the number of notes (notes + durations)
+#   for i in range (0,notes*2,2):
 
-    # calculates the duration of each note
-    divider = melody[i + 1]
-      # regular note, just proceed
-    noteDuration = (wholenote) / divider
+#     # calculates the duration of each note
+#     divider = melody[i + 1]
+#       # regular note, just proceed
+#     noteDuration = (wholenote) / divider
   
-    #we only play the note for 90% of the duration, leaving 10% as a pause
-    simpleio.tone(PIEZO_PIN, melody[i], duration = noteDuration)
+#     #we only play the note for 90% of the duration, leaving 10% as a pause
+#     simpleio.tone(PIEZO_PIN, melody[i], duration = noteDuration)
 
-     #Wait for the specief duration before playing the next note.
-    time.sleep(noteDuration)
+#      #Wait for the specief duration before playing the next note.
+#     time.sleep(noteDuration)
