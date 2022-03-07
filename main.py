@@ -164,7 +164,6 @@ melody2 = [NOTE_C5,4,
   NOTE_F5,2
 ]
 
-
 i = 0
 while move1:
     resetto90()
@@ -172,30 +171,32 @@ while move1:
         leg_left.angle = angle
         leg_right.angle = angle
         simpleio.tone(PIEZO_PIN, melody1[i], 0.05)
+    i = i+2 
     for angle in range(120, 60, -10):
         leg_left.angle = angle
         leg_right.angle =  angle
         simpleio.tone(PIEZO_PIN, melody1[i], 0.05)
     resetto90()
-    i = i+2
-    for angle in range(90, 150, 5):
-        foot_left.angle = angle
-        foot_right.angle = 180-angle
-        simpleio.tone(PIEZO_PIN, melody1[i], 0.05)
-        
+
     time = 0
-    for angle in range(150, 90, -3):
+    for angle in range(90, 150, 6):
         foot_left.angle = angle
         foot_right.angle = 180-angle
         if time < 0.25:
             j = i+2
             simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
             time = time + 0.05
-        elif time >= 0.25 and time < 0.5:
+        else:
             j= i+4
             simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
             time = time + 0.05
-        elif time >= 0.5 and time < 0.75:
+
+    time = 0
+    for angle in range(150, 90, -6):
+        foot_left.angle = angle
+        foot_right.angle = 180-angle
+
+        if time < 0.25:
             j= i+6
             simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
             time = time + 0.05
@@ -210,9 +211,10 @@ while move1:
     i = i+2
     simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1]) 
     count=count+1
+    
     if count == 3:
-        move1 = False
-
+        for i in range(i+2,len(melody1)/2,2):
+            simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1])
 
 time.sleep(1)
 
