@@ -5,12 +5,17 @@ import pulseio
 import simpleio
 from adafruit_motor import servo
 
+#define correct center angles:
+clegl = 90
+clegr = 102
+cfootl = 92
+cfootr = 94
 
 def resetto90():
-    leg_left.angle = 90
-    leg_right.angle = 102
-    foot_left.angle = 92
-    foot_right.angle = 90
+    leg_left.angle = clegl
+    leg_right.angle = clegr
+    foot_left.angle = cfootl
+    foot_right.angle = cfootr
 
 
 # create a PWMOut object on Pin D9-12.
@@ -25,14 +30,12 @@ leg_right = servo.Servo(top_right)
 foot_left = servo.Servo(bot_left)
 foot_right = servo.Servo(bot_right)
 
-
-
-move1 = False
+move1 = True
 move2 = False
 move3 = False
 move4 = False
 move5 = False
-move6 = True
+move6 = False
 music = False
 
 count = 0
@@ -164,60 +167,73 @@ melody2 = [NOTE_C5,4,
 
 i = 0
 while move1:
-    simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1])
-    for angle in range(80, 100, 5):
+    resetto90()
+    for angle in range(60, 120, 10):
         leg_left.angle = angle
         leg_right.angle = angle
-        time.sleep(0.05)
-    for angle in range(100, 80, -5):
+        simpleio.tone(PIEZO_PIN, melody1[i], 0.05)
+    for angle in range(120, 60, -10):
         leg_left.angle = angle
         leg_right.angle =  angle
-        time.sleep(0.05)
-    i = i+2    
-    simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1])
-    for angle in range(90, 150, 10):
+        simpleio.tone(PIEZO_PIN, melody1[i], 0.05)
+    resetto90()
+    i = i+2
+    for angle in range(90, 150, 5):
         foot_left.angle = angle
         foot_right.angle = 180-angle
-        time.sleep(0.1)
-    i = i+2
-    simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1]) 
-    i = i+2
-    simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1]) 
-    i = i+2
-    simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1]) 
-    i = i+2
-    simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1])
-
-    for angle in range(150, 90, -10):
+        simpleio.tone(PIEZO_PIN, melody1[i], 0.05)
+        
+    time = 0
+    for angle in range(150, 90, -3):
         foot_left.angle = angle
         foot_right.angle = 180-angle
-        time.sleep(0.1)
+        if time < 0.25:
+            j = i+2
+            simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
+            time = time + 0.05
+        elif time >= 0.25 and time < 0.5:
+            j= i+4
+            simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
+            time = time + 0.05
+        elif time >= 0.5 and time < 0.75:
+            j= i+6
+            simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
+            time = time + 0.05
+        else:
+            j= i+8
+            simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
+            time = time + 0.05
+    i = j
     resetto90()
     i = i+2
     simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1]) 
     i = i+2
     simpleio.tone(PIEZO_PIN, melody1[i], tempo/melody1[i+1]) 
-    time.sleep(0.05)
     count=count+1
     if count == 3:
         move1 = False
 
+
 time.sleep(1)
+
+#-----------------------------------------------------
+#move2 
+
 count = 0
 while move2:
     resetto90()
 
     #right up
-    for angle in range(90, 10, -39):
+    for angle in range(cfootr, cfootr-81, -40):
         foot_right.angle = angle
         time.sleep(0.05)
-    for angle in range(92, 32, -19):
+    for angle in range(cfootl, cfootl-61, -20):
         foot_left.angle = angle
         time.sleep(0.05)
     #  \\
 
     time.sleep(0.1)
-    foot_right.angle = 120 #lift up outward
+    foot_right.angle = 124 #lift up outward
     time.sleep(1)
     leg_right.angle =  32 #kick
     time.sleep(0.1)
@@ -234,10 +250,10 @@ while move2:
 #--------------------
 
     #left up
-    for angle in range(92, 172, 39):
+    for angle in range(cfootl, cfootl+81, 40):
         foot_left.angle = angle
         time.sleep(0.05)
-    for angle in range(90, 150, 19):
+    for angle in range(cfootr, cfootr+61, 20):
         foot_right.angle = angle
         time.sleep(0.05)
     #  //
@@ -397,4 +413,3 @@ wholenote = (60* 4) / tempo
 
 divider = 0
 noteDuration = 0
-
