@@ -121,15 +121,15 @@ def move_set2():
             for angle in range(90, 110, 5):
                 foot_left.angle = angle
                 foot_right.angle = angle
-                simpleio.tone(PIEZO_PIN, melody1[i], 0.05)
+                simpleio.tone(PIEZO_PIN, melody1[i], 0.025)
             for angle in range(110, 60, -5):
                 foot_left.angle = angle
                 foot_right.angle = angle
-                simpleio.tone(PIEZO_PIN, melody1[i], 0.05)
+                simpleio.tone(PIEZO_PIN, melody1[i], 0.025)
             for angle in range(60, 90, 5):
                 foot_left.angle = angle
                 foot_right.angle = angle
-                simpleio.tone(PIEZO_PIN, melody1[i], 0.05)
+                simpleio.tone(PIEZO_PIN, melody1[i], 0.025)
         resetto90()
         simpleio.tone(PIEZO_PIN, melody1[i], 0.5)
         #move2 = False
@@ -220,12 +220,12 @@ def move_set3():
 
 #-----------------------------------MOVE 4---------------------------------------------
 def move_set4():
-    count = 0
+
     while move4:
         resetto90()
         time.sleep(0.5)
 
-        #right up
+        #turn lefy
         for angle in range(90, 10, -39):
             foot_right.angle = angle
             time.sleep(0.05)
@@ -297,6 +297,14 @@ def move_set5():
                 leg_right.angle = leg_right.angle - 2
             
         # move5 = False
+        for i in range (5):
+            for i in range (10):
+                foot_right.angle = foot_right.angle - 3
+                foot_left.angle = foot_left.angle - 3
+
+            for i in range (10):
+                foot_right.angle = foot_right.angle + 3
+                foot_left.angle = foot_left.angle + 3
         break
 
 #-----------------------------------MOVE 6---------------------------------------------
@@ -380,7 +388,7 @@ while True:
             move_set6()
             resetto90()
             # move_sequence.append("6")
-        elif (keys == '9'):
+        elif (keys == [9]):
             print("Terminated")
             break
     time.sleep(0.2)
