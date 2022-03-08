@@ -350,7 +350,7 @@ def move_set4():
 #-----------------------------------MOVE 5---------------------------------------------
 def move_set5():
     while move5:
-        resetto90()
+        initial()
         # 开合
         for i in range (0):
             for i in range (10):
@@ -381,40 +381,38 @@ def move_set5():
                 leg_right.angle = leg_right.angle - 2
                 
         #slide right
-        for i in range (3):
-            for i in range (10):
-                foot_right.angle = foot_right.angle + 2
-                foot_left.angle = foot_left.angle + 4
-            time.sleep(1)
-            for i in range (10):
-                foot_right.angle = foot_right.angle - 6
-                foot_left.angle = foot_left.angle + 4
+        for i in range (10):
+            for i in range (5):
+                foot_left.angle = foot_left.angle + 12 #抬左
+                foot_right.angle = foot_right.angle + 4 #低右
+            for i in range (5):
+                foot_left.angle = foot_left.angle + 4 #抬左
+                foot_right.angle = foot_right.angle - 12 #抬右
 
-            for i in range (10):
-                foot_right.angle = foot_right.angle - 2
-                foot_left.angle = foot_left.angle - 8
+            for i in range (5):
+                foot_left.angle = foot_left.angle - 16
+                foot_right.angle = foot_right.angle - 4
 
-            for i in range (10):
-                foot_right.angle = foot_right.angle + 6
-        time.sleep(1)
+            for i in range (5):
+                foot_right.angle = foot_right.angle + 12
+        time.sleep(0.1)
         resetto90()
         #slide left
-        for i in range (3):
-            for i in range (10):
+        for i in range (10):
+            for i in range (5):
+                foot_right.angle = foot_right.angle - 12
+                foot_left.angle = foot_left.angle - 4
+
+            for i in range (5):
                 foot_right.angle = foot_right.angle - 4
-                foot_left.angle = foot_left.angle - 2            
-            time.sleep(1)
+                foot_left.angle = foot_left.angle + 12
 
-            for i in range (10):
-                foot_right.angle = foot_right.angle - 4
-                foot_left.angle = foot_left.angle + 5
+            for i in range (5):
+                foot_right.angle = foot_right.angle + 16
+                foot_left.angle = foot_left.angle + 4
 
-            for i in range (10):
-                foot_right.angle = foot_right.angle + 8
-                foot_left.angle = foot_left.angle + 2
-
-            for i in range (10):
-                foot_left.angle = foot_left.angle - 5
+            for i in range (5):
+                foot_left.angle = foot_left.angle - 12
         break
 
 
@@ -426,6 +424,7 @@ def move_set6():
         time.sleep(0.5)
 
         #turn left
+
         for angle in range(cfootr, 10, -39):
             foot_right.angle = angle
             time.sleep(0.05)
@@ -435,30 +434,40 @@ def move_set6():
         #  \\
 
         time.sleep(0.1)
-        foot_right.angle = 120 #lift up outward
+        foot_right.angle = 150 #lift up outward
         time.sleep(1)
         leg_right.angle =  32 #kick
         time.sleep(0.1)
+        
+        
 
+        for i in range(3):
+            for angle in range(32, clegr, 20):
+                leg_right.angle =  angle
+                time.sleep(0.05)
+            for angle in range(clegl, 30, -6):
+                leg_left.angle =  angle
+                time.sleep(0.05)
+            for angle in range(30, 100, 6):
+                leg_left.angle =  angle
+                time.sleep(0.05)
+            time.sleep(0.5)
 
-        for angle in range(clegl, 30, -3):
-            leg_left.angle =  angle
-            time.sleep(0.05)
-        for angle in range(32, clegr, 3):
-            leg_right.angle =  angle
-            time.sleep(0.05)
-        for angle in range(32, cfootl, 19):
-            foot_left.angle = angle
-            time.sleep(0.05)
-        for angle in range(120, cfootr-1, -10):
+        for angle in range(150, cfootr-1, -19):
             foot_right.angle = angle
             time.sleep(0.05)
-        for angle in range(30, clegl+1, 3):
-            leg_left.angle =  angle
+        
+        for angle in range(32, cfootl, 8):
+            foot_left.angle = angle
             time.sleep(0.05)
         
+        
+        
+        
         # turn opposite
-
+        resetto90()
+        time.sleep(1)
+        
         for angle in range(cfootl, cfootl+81, 40):
             foot_left.angle = angle
             #simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
@@ -477,7 +486,7 @@ def move_set6():
         for angle in range(clegr, clegr+61, 3):
             leg_right.angle =  angle
             time.sleep(0.05)
-        for angle in range(143, clengr, -3):
+        for angle in range(143, clegr, -3):
             leg_right.angle =  angle
             time.sleep(0.05)
         for angle in range(cfootr+61, cfootr, -19):
@@ -562,6 +571,12 @@ while True:
             resetto90()
             move4 = True
             move_set4()
+            resetto90()
+            move5 = True
+            move_set5()
+            resetto90()
+            move6 = True
+            move_set6()
             resetto90()
         elif (keys == [9]):
             print("Terminated")
