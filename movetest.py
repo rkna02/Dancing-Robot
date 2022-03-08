@@ -14,13 +14,6 @@ clegr = 102
 cfootl = 92
 cfootr = 94
 
-#reset position fuction
-def resetto90():
-    leg_left.angle = 90
-    leg_right.angle = 102
-    foot_left.angle = 92
-    foot_right.angle = 90
-
 #------------SET UP PINS FOR LEGS AND FOOTS----------------------------
 # create a PWMOut object on Pin D9-12.
 bot_left = pwmio.PWMOut(board.D9, duty_cycle=2 ** 15, frequency=50)
@@ -33,6 +26,49 @@ leg_left = servo.Servo(top_left)
 leg_right = servo.Servo(top_right)
 foot_left = servo.Servo(bot_left)
 foot_right = servo.Servo(bot_right)
+
+#reset position fuction
+def resetto90():
+    while leg_left.angle > clegl+10:
+        leg_left.angle = leg_left.angle - 10
+        time.sleep(0.05)
+    while leg_left.angle < clegl-10:
+        leg_left.angle = leg_left.angle + 10
+        time.sleep(0.05)
+
+    while leg_right.angle > clegr+10:
+        leg_right.angle = leg_right.angle - 10
+        time.sleep(0.05)
+    print(leg_right.angle)
+    while leg_right.angle < clegr-10:
+        print("hi")
+        leg_right.angle = leg_right.angle + 10
+        time.sleep(0.05)
+
+
+    while foot_left.angle > cfootl+10:
+        foot_left.angle = foot_left.angle - 10
+        time.sleep(0.05)
+    while foot_left.angle < cfootl-10:
+        foot_left.angle = foot_left.angle + 10
+        time.sleep(0.05)
+
+    while foot_right.angle > cfootr+10:
+        foot_right.angle = foot_right.angle - 10
+        time.sleep(0.05)
+    while foot_right.angle < cfootr-10:
+        foot_right.angle = foot_right.angle + 10
+        time.sleep(0.05)
+
+    leg_left.angle = clegl
+    leg_right.angle = clegr
+    foot_left.angle = cfootl
+    foot_right.angle = cfootr
+def initial():
+    leg_left.angle = clegl
+    leg_right.angle = clegr
+    foot_left.angle = cfootl
+    foot_right.angle = cfootr
 
 #-----------------------SET UP MUSIC PINS-----------------------------------------------
 PIEZO_PIN = buzzer.PIEZO_PIN
@@ -54,49 +90,60 @@ def move_set1():
     while move1:
         if count!=0:
             note=note+2
-        resetto90()
+        initial()
         for angle in range(60, 120, 6):
             leg_left.angle = angle
             leg_right.angle = angle
             simpleio.tone(PIEZO_PIN, melody1[note], 0.05)
-        i = i+2
+        note = note+2
         for angle in range(120, 60, -6):
             leg_left.angle = angle
             leg_right.angle =  angle
             simpleio.tone(PIEZO_PIN, melody1[note], 0.05)
         resetto90()
+        
+        # four move 
+        # (foot: /\,_ _,/\,_ _)
+        # (leg: l, mid, r, mid)
+        note = note+2
+        for f in range(5): #1
+            foot_left.angle = foot_left.angle + 5
+            foot_right.angle = foot_right.angle - 5
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
+            leg_left.angle = leg_left.angle + 10
+            leg_right.angle = leg_right.angle + 10
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
+        note = note+2
+        for angle in range(5):#2
+            foot_left.angle = foot_left.angle - 5
+            foot_right.angle = foot_right.angle + 5
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
+            leg_left.angle = leg_left.angle - 10
+            leg_right.angle = leg_right.angle - 10
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
 
-        t = 0
-        for angle in range(90, 150, 6):
-            foot_left.angle = angle
-            foot_right.angle = 180-angle
-            if t < 0.25:
-                j = note+2
-                simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
-                t = t + 0.05
-            else:
-                j= note+4
-                simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
-                t = t + 0.05
-
-        t = 0
-        for angle in range(150, 90, -6):
-            foot_left.angle = angle
-            foot_right.angle = 180-angle
-
-            if t < 0.25:
-                j= note+6
-                simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
-                t = t + 0.05
-            else:
-                j= note+8
-                simpleio.tone(PIEZO_PIN, melody1[j], 0.05)
-                t = t + 0.05
-        i = j
         resetto90()
-        i = i+2
+        note = note+2
+        for f in range(5):#3
+            foot_left.angle = foot_left.angle + 5
+            foot_right.angle = foot_right.angle - 5
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
+            leg_left.angle = leg_left.angle - 10
+            leg_right.angle = leg_right.angle - 10
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
+        note = note+2
+        for angle in range(5):#4
+            foot_left.angle = foot_left.angle - 5
+            foot_right.angle = foot_right.angle + 5
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
+            leg_left.angle = leg_left.angle + 10
+            leg_right.angle = leg_right.angle + 10
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
+            
+        resetto90()
+        note = note+2
         simpleio.tone(PIEZO_PIN, melody1[note], tempo/melody1[note+1])
-        i = i+2
+        note = note+2
         simpleio.tone(PIEZO_PIN, melody1[note], tempo/melody1[note+1])
 
         count= count + 1
@@ -108,11 +155,11 @@ def move_set1():
 def move_set2():
     note = 48
     while move2:
-        resetto90()
+        initial()
         for angle in range(102, 41, -12):# turn right leg
             leg_right.angle =  angle
             simpleio.tone(PIEZO_PIN, melody1[note], 0.05)
-        i = i +2
+        note = note +2
         for angle in range(90, 161, 12):# turn left leg
             leg_left.angle =  angle
             simpleio.tone(PIEZO_PIN, melody1[note], 0.05)
@@ -140,7 +187,7 @@ def move_set3():
     note = 0
     count = 0
     while move3:
-        resetto90()
+        initial()
         if count == 1:
             note = note + 2
         #right up
@@ -199,7 +246,7 @@ def move_set3():
         simpleio.tone(PIEZO_PIN, melody2[note], 0.5)
         leg_left.angle =  143 #kick
         time.sleep(0.1)
-        i = i+2
+        note = note+2
         for angle in range(143, 82, -6):# shake
             leg_left.angle =  angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
@@ -207,9 +254,10 @@ def move_set3():
         for angle in range(82, 143, 6):# shake
             leg_left.angle =  angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
-
-        resetto90()
+        
         simpleio.tone(PIEZO_PIN, melody2[note], 0.5)
+        resetto90()
+        
 
         count=count+1
         if count == 2:
@@ -223,41 +271,41 @@ def move_set4():
     note = 0
     count = 0
     while move4:
-        resetto90()
+        initial()
         for i in range(10):
             leg_right.angle = leg_right.angle - 4
             foot_right.angle = foot_right.angle + 4 
-            simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.05)
         note = note + 2
         for i in range(10):
             leg_right.angle = leg_right.angle + 8
             foot_right.angle = foot_right.angle - 8
-            simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.05)
         note = note + 2
         for i in range(10):
             leg_right.angle = leg_right.angle - 4
             foot_right.angle = foot_right.angle + 4
-            if i == 6:
+            if i == 5:
                 note = note + 2
-            simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.05)
         
         note = note + 2        
         for i in range(20):
             leg_left.angle = leg_left.angle + 2
             foot_left.angle = foot_left.angle - 2
-            if i == 11:
+            if i == 10:
                 note = note + 2
-            simpleio.tone(PIEZO_PIN, melody2[note], 0.025)
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
         note = note + 2
         for i in range(20):
             leg_left.angle = leg_left.angle - 4
             foot_left.angle = foot_left.angle + 4
-            simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.05)
         note = note + 2
         for i in range(20):
             leg_left.angle = leg_left.angle + 4
             foot_left.angle = foot_left.angle -2
-            simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
+            simpleio.tone(PIEZO_PIN, melody1[note], 0.05)
         
         resetto90()
         count=count+1
@@ -268,32 +316,34 @@ def move_set4():
                 leg_right.angle = leg_right.angle - 3
                 foot_right.angle = foot_right.angle + 3
                 foot_left.angle = foot_left.angle - 3
-                simpleio.tone(PIEZO_PIN, melody2[note], 0.025)
+                simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
             note = note + 2
             for i in range (10):
                 leg_left.angle = leg_left.angle - 3
                 leg_right.angle = leg_right.angle + 3    
                 foot_right.angle = foot_right.angle - 3
                 foot_left.angle = foot_left.angle + 3
-                simpleio.tone(PIEZO_PIN, melody2[note], 0.025)
+                simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
             note = note + 2
             for i in range (20):
                 leg_left.angle = leg_left.angle - 2
                 leg_right.angle = leg_right.angle - 2
-                simpleio.tone(PIEZO_PIN, melody2[note], 0.025)
+                simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
             note = note +2    
             for i in range (21):
                 leg_left.angle = leg_left.angle + 4
                 leg_right.angle = leg_right.angle + 4
-                simpleio.tone(PIEZO_PIN, melody2[note], 0.025)
+                simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
             note = note +2   
             for i in range (20):
                 leg_left.angle = leg_left.angle - 2
                 leg_right.angle = leg_right.angle - 2
-                simpleio.tone(PIEZO_PIN, melody2[note], 0.025)
-            resetto90()
+                simpleio.tone(PIEZO_PIN, melody1[note], 0.025)
+                
             note = note + 2
-            simpleio.tone(PIEZO_PIN, melody2[note], 1)
+            simpleio.tone(PIEZO_PIN, melody1[note], 1)
+            resetto90()
+            
             break
 
 #-----------------------------------MOVE 5---------------------------------------------
@@ -464,6 +514,16 @@ while True:
             move_set6()
             resetto90()
             # move_sequence.append("6")
+        elif (keys == [7]):
+            move1 = True
+            move_set1()
+            resetto90()
+            move2 = True
+            move_set2()
+            resetto90()
+            move3 = True
+            move_set3()
+            resetto90()
         elif (keys == [9]):
             print("Terminated")
             break
