@@ -5,13 +5,13 @@ import pulseio
 import simpleio
 from adafruit_motor import servo
 
-import os
 import terminalio
 import displayio
 from adafruit_display_text import label
 from adafruit_st7735r import ST7735R
-import adafruit_imageload
 
+import os 
+import adafruit_imageload
 
 def resetto90():
     leg_left.angle = 90
@@ -20,95 +20,153 @@ def resetto90():
     foot_right.angle = 90
 
 
-# Release any resources currently in use for the displays
+# display set up and initialization
 displayio.release_displays()
 
 spi = board.SPI()
-tft_cs = board.D9  # D13
-tft_dc = board.D12   # D7
+tft_cs = board.D13
+tft_dc = board.D7
 
-display_bus = displayio.FourWire(
-    spi, command=tft_dc, chip_select=tft_cs, reset=board.D11
-)
-
+display_bus = displayio.FourWire(spi, command=tft_dc, chip_select=tft_cs, reset=board.D0)
 display = ST7735R(display_bus, width=128, height=128, rotation=90)
 
-# Make the display context
-splash = displayio.Group()
+splash = displayio.Group()  # main display group 
 display.show(splash)
 
-color_bitmap = displayio.Bitmap(128, 128, 1)
-color_palette = displayio.Palette(1)
-color_palette[0] = 0x020270  # Dark blue as background
+main_menu = displayio.Group()
+sub_menu = displayio.Group()
+error = displayio.Group()
 
-bg_sprite = displayio.TileGrid(color_bitmap, pixel_shader=color_palette, x=0, y=0)
-splash.append(bg_sprite)
 
-# Create bitmaps for the buttons
-button1_bitmap = displayio.Bitmap(36, 36, 1)
-button2_bitmap = displayio.Bitmap(36, 36, 1)
-button3_bitmap = displayio.Bitmap(36, 36, 1)
-button4_bitmap = displayio.Bitmap(36, 36, 1)
-button5_bitmap = displayio.Bitmap(36, 36, 1)
-button6_bitmap = displayio.Bitmap(36, 36, 1)
+""" 
+    Displays the main menu of the robot with bitmaps and texts
+    Prompts user for a key from 1-2 and performs their corresponding actions
+    If other keys are pressed, display will show an error
+    1 - navigates user to a new page where the user can choose individual dance moves to perform
+    2 - click to immediately perform all dance moves at once 
+"""
 
-button_palette = displayio.Palette(1)
-button_palette[0] = 0x89CFF0  # blue buttons
+def main_menu():
+    # set up bitmaps for backgrounds
+    color_bitmap = displayio.Bitmap(128, 128, 1)
+    button1_bitmap = displayio.Bitmap(20, 55, 1)
+    button2_bitmap = displayio.Bitmap(20, 55, 1)
+    description1_bitmap = displayio.Bitmap(95, 55, 1)
+    description2_bitmap = displayio.Bitmap(95, 55, 1)
 
-# created buttons for the dance moves
-button1_sprite = displayio.TileGrid(
-    button1_bitmap, pixel_shader=button_palette, x=7, y=35
-)
-button2_sprite = displayio.TileGrid(
-    button2_bitmap, pixel_shader=button_palette, x=48, y=35
-)
-button3_sprite = displayio.TileGrid(
-    button3_bitmap, pixel_shader=button_palette, x=89, y=35
-)
-button4_sprite = displayio.TileGrid(
-    button4_bitmap, pixel_shader=button_palette, x=7, y=75
-)
-button5_sprite = displayio.TileGrid(
-    button5_bitmap, pixel_shader=button_palette, x=48, y=75
-)
-button6_sprite = displayio.TileGrid(
-    button6_bitmap, pixel_shader=button_palette, x=89, y=75
-)
+    # set up color palettes
+    color_palette = displayio.Palette(1)
+    color_palette[0] = 0x221D61  # Dark blue as background
+    button_palette = displayio.Palette(1)
+    button_palette[0] = 0x89CFF0  # light blue buttons
+    description_palette = displayio.Palette(1)
+    description_palette[0] = 0x0B41E0  # average blue background for description
 
-splash.append(button1_sprite)
-splash.append(button2_sprite)
-splash.append(button3_sprite)
-splash.append(button4_sprite)
-splash.append(button5_sprite)
-splash.append(button6_sprite)
+    # set up formatting and placements
+    bg_sprite = displayio.TileGrid(color_bitmap, pixel_shader=color_palette, x=0, y=0)
+    button1_sprite = displayio.TileGrid(button1_bitmap, pixel_shader=button_palette, x=8, y=6)
+    button2_sprite = displayio.TileGrid(button2_bitmap, pixel_shader=button_palette, x=8, y=66)
+    description1_sprite = displayio.TileGrid(description1_bitmap, pixel_shader=description_palette, x=28, y=6)
+    description2_sprite = displayio.TileGrid(description2_bitmap, pixel_shader=description_palette, x=28, y=66)
 
-# Create button numbers
-prompt = "Choose a dance!"
-text_label = label.Label(terminalio.FONT, text=prompt, color=0xFFFFFF, x=22, y=15)
-text_one = label.Label(terminalio.FONT, text="1", scale=2, color=0xFFFFFF, x=20, y=51)
-text_two = label.Label(terminalio.FONT, text="2", scale=2, color=0xFFFFFF, x=61, y=51)
-text_three = label.Label(terminalio.FONT, text="3", scale=2, color=0xFFFFFF, x=102, y=51)
-text_four = label.Label(terminalio.FONT, text="4", scale=2, color=0xFFFFFF, x=20, y=91)
-text_five = label.Label(terminalio.FONT, text="5", scale=2, color=0xFFFFFF, x=61, y=91)
-text_six = label.Label(terminalio.FONT, text="6", scale=2, color=0xFFFFFF, x=102, y=91)
+    # set up button and description texts
+    text_one = label.Label(terminalio.FONT, text="1", scale=3, color=0xFFFFFF, x=11, y=30)
+    text_two = label.Label(terminalio.FONT, text="2", scale=3, color=0xFFFFFF, x=11, y=90)
+    text_description1 = label.Label(
+        terminalio.FONT, text="Choose an\nindividual\ndance move!", color=0xFFFFFF, x=32, y=15
+    )
+    text_description2 = label.Label(terminalio.FONT, text="Perform all\ndance moves\nnow!", color=0xFFFFFF, x=32, y=75)
 
-splash.append(text_label)
-splash.append(text_one)
-splash.append(text_two)
-splash.append(text_three)
-splash.append(text_four)
-splash.append(text_five)
-splash.append(text_six)
+    # show display
+    main_menu.append(bg_sprite)
+    main_menu.append(button1_sprite)
+    main_menu.append(button2_sprite)
+    main_menu.append(description1_sprite)
+    main_menu.append(description2_sprite)
+    main_menu.append(text_one)
+    main_menu.append(text_two)
+    main_menu.append(text_description1)
+    main_menu.append(text_description2)
 
-time.sleep(2)
 
-# directory on CIRCUITPY where BMP animation frames are stored
-GIF_dir="/GIF/christmas"
-GIF_files = os.listdir(GIF_dir)
+"""
+    Displays the sub menu of the robot with bitmaps and texts
+    Prompts user for a key from 1-6 and performs the corresponding dance moves 
+    If other keys are pressed, display will show an error
+"""
 
-splash.pop()  # remove previous bitmap to save memory
 
-while True:
+def sub_menu():
+    color_bitmap = displayio.Bitmap(128, 128, 1)
+    color_palette = displayio.Palette(1)
+    color_palette[0] = 0x221D61  # Dark blue as background
+
+    bg_sprite = displayio.TileGrid(color_bitmap, pixel_shader=color_palette, x=0, y=0)
+    splash.append(bg_sprite)
+
+    # Create bitmaps for the buttons
+    button1_bitmap = displayio.Bitmap(36, 36, 1)
+    button2_bitmap = displayio.Bitmap(36, 36, 1)
+    button3_bitmap = displayio.Bitmap(36, 36, 1)
+    button4_bitmap = displayio.Bitmap(36, 36, 1)
+    button5_bitmap = displayio.Bitmap(36, 36, 1)
+    button6_bitmap = displayio.Bitmap(36, 36, 1)
+
+    button_palette = displayio.Palette(1)
+    button_palette[0] = 0x89CFF0 # blue buttons
+
+    # created buttons for the dance moves
+    button1_sprite = displayio.TileGrid(button1_bitmap, pixel_shader=button_palette, x=7, y=35)
+    button2_sprite = displayio.TileGrid(button2_bitmap, pixel_shader=button_palette, x=48, y=35)
+    button3_sprite = displayio.TileGrid(button3_bitmap, pixel_shader=button_palette, x=89, y=35)
+    button4_sprite = displayio.TileGrid(button4_bitmap, pixel_shader=button_palette, x=7, y=75)
+    button5_sprite = displayio.TileGrid(button5_bitmap, pixel_shader=button_palette, x=48, y=75)
+    button6_sprite = displayio.TileGrid(button6_bitmap, pixel_shader=button_palette, x=89, y=75)
+
+    # Create button numbers
+    prompt = "Choose a dance!"
+    text_label = label.Label(terminalio.FONT, text=prompt, color=0xFFFFFF, x=22, y=15)
+    text_one_sub = label.Label(terminalio.FONT, text="1", scale=2, color=0xFFFFFF, x=20, y=51)
+    text_two_sub = label.Label(terminalio.FONT, text="2", scale=2, color=0xFFFFFF, x=61, y=51)
+    text_three = label.Label(terminalio.FONT, text="3", scale=2, color=0xFFFFFF, x=102, y=51)
+    text_four = label.Label(terminalio.FONT, text="4", scale=2, color=0xFFFFFF, x=20, y=91)
+    text_five = label.Label(terminalio.FONT, text="5", scale=2, color=0xFFFFFF, x=61, y=91)
+    text_six = label.Label(terminalio.FONT, text="6", scale=2, color=0xFFFFFF, x=102, y=91)
+
+    sub_menu.append(button1_sprite)
+    sub_menu.append(button2_sprite)
+    sub_menu.append(button3_sprite)
+    sub_menu.append(button4_sprite)
+    sub_menu.append(button5_sprite)
+    sub_menu.append(button6_sprite)
+    sub_menu.append(text_label)
+    sub_menu.append(text_one_sub)
+    sub_menu.append(text_two_sub)
+    sub_menu.append(text_three)
+    sub_menu.append(text_four)
+    sub_menu.append(text_five)
+    sub_menu.append(text_six)
+    
+""" Displays error message on LCD screen when an invalid button is pressed """
+
+
+def error():
+    color_bitmap = displayio.Bitmap(128, 128, 1)
+    color_palette = displayio.Palette(1)
+    color_palette[0] = 0x221D61  # Dark blue as background
+    bg_sprite = displayio.TileGrid(color_bitmap, pixel_shader=color_palette, x=0, y=0)
+    error.append(bg_sprite)
+    
+    text_error1 = label.Label(terminalio.FONT, text="ERROR:", color=0xFFFFFF, scale=2, x=22, y=30)
+    text_error2 = label.Label(terminalio.FONT, text="INVALID BUTTON", color=0xFFFFFF, scale=2, x=22, y=75)
+    error.append(text_error1)
+    error.append(text_error2)
+
+
+def loading(GIF_dir):
+    # directory on CIRCUITPY where BMP animation frames are stored
+    GIF_files = os.listdir(GIF_dir)
+
     for name in GIF_files:
         filename = GIF_dir + "/" + name
         bitmap, palette = adafruit_imageload.load(filename, bitmap=displayio.Bitmap, palette=displayio.Palette)
@@ -116,13 +174,95 @@ while True:
         group = displayio.Group()  # Create a Group to hold the TileGrid
         group.append(tile_grid)  # Add the TileGrid to the Group
         display.show(group)  # Add the Group to the Display
+    display.release(group)
+
+
+""" Changes the color of a button when its corresponding dance move is being performed by the robot """
+
+
+def performing_ind(button):
+    button_bitmap = displayio.Bitmap(36, 36, 1)
+    button_palette = displayio.Palette(1)
+    button_palette[0] = 0xF0CF89  # yellow buttons
+
+    if button == 1:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=7, y=35)
+        text = label.Label(terminalio.FONT, text="1", scale=2, color=0xFFFFFF, x=20, y=51)
+        splash.append(button_sprite)
+        splash.append(text)
+    elif button == 2:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=48, y=35)
+        text = label.Label(terminalio.FONT, text="1", scale=2, color=0xFFFFFF, x=61, y=51)
+        splash.append(button_sprite)
+        splash.append(text)
+    elif button == 3:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=89, y=35)
+        text = label.Label(terminalio.FONT, text="1", scale=2, color=0xFFFFFF, x=102, y=51)
+        splash.append(button_sprite)
+        splash.append(text)
+    elif button == 4:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=7, y=75)
+        text = label.Label(terminalio.FONT, text="1", scale=2, color=0xFFFFFF, x=20, y=91)
+        splash.append(button_sprite)
+        splash.append(text)
+    elif button == 5:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=48, y=75)
+        text = label.Label(terminalio.FONT, text="1", scale=2, color=0xFFFFFF, x=61, y=91)
+        splash.append(button_sprite)
+        splash.append(text)
+    elif button == 6:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=89, y=75)
+        text = label.Label(terminalio.FONT, text="1", scale=2, color=0xFFFFFF, x=102, y=91)
+        splash.append(button_sprite)
+        splash.append(text)
+        
+    time.sleep(0.5)
+    splash.pop()
+    splash.pop()
+
+
+""" Changes the color of button 2 and description 2 in the main menu 
+    Used when the robot is per"""
+
+
+def performing_all():
+    button_bitmap = displayio.Bitmap(20, 55, 1)
+    description_bitmap = displayio.Bitmap(95, 55, 1)
+    
+    button_palette = displayio.Palette(1)
+    button_palette[0] = 0xF0CF89  # yellow buttons
+    description_palette = displayio.Palette(1)
+    description_palette[0] = 0x0B41E0  # gold description
+
+    button_sprite = displayio.TileGrid(button2_bitmap, pixel_shader=button_palette, x=8, y=66)
+    description_sprite = displayio.TileGrid(description2_bitmap, pixel_shader=description_palette, x=28, y=66)
+
+    # set up button and description texts
+    text_two = label.Label(terminalio.FONT, text="2", scale=3, color=0xFFFFFF, x=11, y=90)
+    text_description = label.Label(terminalio.FONT, text="Perform all\ndance moves\nnow!", color=0xFFFFFF, x=32, y=75)
+
+    # show display
+    splash.append(button_sprite)
+    splash.append(description_sprite)
+    splash.append(text_two)
+    splash.append(text_description)
+
+
+
+while True:
+    main_menu()
+    time.sleep(3)
+    sub_menu()
+    time.sleep(3)
+    loading("GIF/loading")
+    time.sleep(3)
 
 
 # create a PWMOut object on Pin D9-12.
-bot_left = pwmio.PWMOut(board.D7, duty_cycle=2 ** 15, frequency=50)  #D9
-bot_right = pwmio.PWMOut(board.D10, duty_cycle=2 ** 15, frequency=50)  #D10
-top_left = pwmio.PWMOut(board.D5, duty_cycle=2 ** 15, frequency=50)  #D11
-top_right = pwmio.PWMOut(board.D13, duty_cycle=2 ** 15, frequency=50)  #D12
+bot_left = pwmio.PWMOut(board.D9, duty_cycle=2 ** 15, frequency=50)
+bot_right = pwmio.PWMOut(board.D10, duty_cycle=2 ** 15, frequency=50)
+top_left = pwmio.PWMOut(board.D11, duty_cycle=2 ** 15, frequency=50)
+top_right = pwmio.PWMOut(board.D12, duty_cycle=2 ** 15, frequency=50)
 
 # Create a servo object, my_servo.
 leg_left = servo.Servo(top_left)
@@ -135,13 +275,12 @@ move2 = False
 move3 = False
 move4 = False
 move5 = False
-move6 = False
+move6 = True
 music = False
 
 count = 0
 
 while move1:
-
     for angle in range(80, 100, 5):
         leg_left.angle = angle
         leg_right.angle = angle
@@ -167,7 +306,6 @@ while move1:
 
 time.sleep(1)
 count = 0
-
 while move2:
     resetto90()
 
