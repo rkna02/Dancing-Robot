@@ -1,12 +1,16 @@
+from cgitb import reset
 import time
+
+from numpy import number
 import board
 import pwmio
 # import pulseio
-# import simpleio
+import simpleio
 import digitalio
 import adafruit_matrixkeypad
 from adafruit_motor import servo
 import buzzer
+import Mar6_TCD
 
 #define correct center angles:
 clegl = 90
@@ -40,12 +44,12 @@ melody1   = buzzer.melody1
 melody2   = buzzer.melody2
 tempo     = buzzer.tempo
 #-----------------------------------MOVE SETS FUNCTIONS----------------------------------
-move1 = False
-move2 = False
-move3 = False
-move4 = False
-move5 = False
-move6 = False
+move1 = True
+move2 = True
+move3 = True
+move4 = True
+move5 = True
+move6 = True
 
 #-----------------------------------MOVE 1---------------------------------------------
 def move_set1():
@@ -104,7 +108,6 @@ def move_set1():
             for a in range(i+2,len(melody1), 2):
                 simpleio.tone(PIEZO_PIN, melody1[a], tempo/melody1[a+1])
             move1 = False
-            break
 
 #-----------------------------------MOVE 2---------------------------------------------
 def move_set2():
@@ -339,43 +342,139 @@ keypad = adafruit_matrixkeypad.Matrix_Keypad(rows, cols, keys)
 #---------------------------------------
 
 #-------------------------------MAIN PROGRAM-----------------------------------
-# read_input = True
-# move_sequence =[]
+read_input = True
+move_sequence =[]
 #keeps reading the input until user press key '*'
 while True:
     keys = keypad.pressed_keys
     if keys:
         print("Pressed: ", keys)
         if (keys == [1]):
-            move1 = True
-            move_set1()
-            # move_sequence.append("1")
-        elif (keys == [2]):
-            move2 = True
-            move_set2()
-            resetto90()
-            # move_sequence.append("2")
-        elif (keys == [3]):
-            move3 = True
-            move_set3
-            # move_sequence.append("3")
-        elif (keys == [4]):
-            move4 = True
-            move_set4()
-            # move_sequence.append("4")
-        elif (keys == [5]):
-            move5 = True
-            move_set5()
-            # move_sequence.append("5")
-        elif (keys == [6]):
-            move6 = True
-            move_set6()
-            # move_sequence.append("6")
-        elif (keys == '9'):
-            print("Terminated")
+            while (read_input):
+                if (keys == [1]):
+                    # move1 = True
+                    sub_button_active(1)
+                    # move_set1()
+                    # resetto90()
+                    move_sequence.append("1")
+                elif (keys == [2]):
+                    # move2 = True
+                    sub_button_active(2)
+                    # move_set2()
+                    # resetto90()
+                    move_sequence.append("2")
+                elif (keys == [3]):
+                    # move3 = True
+                    sub_button_active(3)
+                    # move_set3()
+                    # resetto90()
+                    move_sequence.append("3")
+                elif (keys == [4]):
+                    # move4 = True
+                    sub_button_active(4)
+                    # move_set4()
+                    # resetto90()
+                    move_sequence.append("4")
+                elif (keys == [5]):
+                    # move5 = True
+                    sub_button_active(5)
+                    # move_set5()
+                    # resetto90()
+                    move_sequence.append("5")
+                elif (keys == [6]):
+                    # move6 = True
+                    sub_button_active(6)
+                    # move_set6()
+                    # resetto90()
+                    move_sequence.append("6")
+                elif (keys == ['#'] ):
+                    print("Playing Move Sequence")
+                    read_input = False
+                else :
+                    print("Invalid Input: CHOOSE 1 -> 6 TO ADD THE MOVES TO THE SEQUENCE, # TO PLAY THE SEQUENCE")
             break
+
+        elif (keys == [2]):
+
+            if (keys == [7]):
+                    # move1 = True
+                    move_set1()
+
+                    # move2 = True
+                    move_set2()
+
+                    # move3 = True
+                    move_set3()
+
+                    # move4 = True
+                    move_set4()
+
+                    # move5 = True
+                    move_set5()
+
+                    # move6 = True
+                    move_set6()
+                    # resetto90()
+                    break
+            elif (keys == [8]):
+                    # move6 = True
+                    move_set6()
+                    
+                    # move5 = True
+                    move_set5()
+
+                    # move4 = True
+                    move_set4()
+
+                    # move3 = True
+                    move_set3()
+
+                    # move2 = True
+                    move_set2()
+
+                    # move1 = True
+                    move_set1()
+                    # resetto90()
+                    break
+            else :
+                print("Invalid Input: CHOOSE 7 OR 8")
+
+        else :
+            print ("Invalid Input: CHOOSE 1 OR 2")
     time.sleep(0.2)
 
+if (len(move_sequence) >= 1):
+    number_of_move = min(len(move_sequence), 10)
+    for i in range(0, number_of_move , 1):
+        if (move_sequence[i] == 1):
+            move1 = True
+            move_set1()
+            # resetto90()
+        elif (move_sequence[i] == 2):
+            move2 = True
+            move_set2()
+            # resetto90()
+            # move_sequence.append("2")
+        elif (move_sequence[i] == 3):
+            move3 = True
+            move_set3()
+            # resetto90()
+            # move_sequence.append("3")
+        elif (move_sequence[i] == 4):
+            move4 = True
+            move_set4()
+            # resetto90()
+            # move_sequence.append("4")
+        elif (move_sequence[i] == 5):
+            move5 = True
+            move_set5()
+            # resetto90()
+            # move_sequence.append("5")
+        elif (move_sequence[i] == 6):
+            move6 = True
+            move_set6()
+            # resetto90()
+            # move_sequence.append("6")
 
 
 #-------------------------------END OF MAIN PROGRAM---------------------------------------

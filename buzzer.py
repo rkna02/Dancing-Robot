@@ -1,6 +1,5 @@
 import board
 import time
-import simpleio
 # Define pin connected to piezo buzzer.
 PIEZO_PIN = board.A1
 
