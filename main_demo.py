@@ -353,37 +353,37 @@ while True:
             while (read_input):
                 if (keys == [1]):
                     # move1 = True
-                    sub_button_active(1)
+                    Mar6_TCD.sub_button_active(1)
                     # move_set1()
                     # resetto90()
                     move_sequence.append("1")
                 elif (keys == [2]):
                     # move2 = True
-                    sub_button_active(2)
+                    Mar6_TCD.sub_button_active(2)
                     # move_set2()
                     # resetto90()
                     move_sequence.append("2")
                 elif (keys == [3]):
                     # move3 = True
-                    sub_button_active(3)
+                    Mar6_TCD.sub_button_active(3)
                     # move_set3()
                     # resetto90()
                     move_sequence.append("3")
                 elif (keys == [4]):
                     # move4 = True
-                    sub_button_active(4)
+                    Mar6_TCD.sub_button_active(4)
                     # move_set4()
                     # resetto90()
                     move_sequence.append("4")
                 elif (keys == [5]):
                     # move5 = True
-                    sub_button_active(5)
+                    Mar6_TCD.sub_button_active(5)
                     # move_set5()
                     # resetto90()
                     move_sequence.append("5")
                 elif (keys == [6]):
                     # move6 = True
-                    sub_button_active(6)
+                    Mar6_TCD.sub_button_active(6)
                     # move_set6()
                     # resetto90()
                     move_sequence.append("6")
