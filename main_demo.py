@@ -34,12 +34,12 @@ melody1   = buzzer.melody1
 melody2   = buzzer.melody2
 tempo     = buzzer.tempo
 #-----------------------------------MOVE SETS FUNCTIONS----------------------------------
-move1 = True
-move2 = True
-move3 = True
-move4 = True
-move5 = True
-move6 = True
+# move1 = True
+# move2 = True
+# move3 = True
+# move4 = True
+# move5 = True
+# move6 = True
 
 #reset position fuction
 def resetto90():
@@ -364,114 +364,113 @@ def move_set4():
 
 #-----------------------------------MOVE 5---------------------------------------------
 def move_set5():
-    while move5:
-        resetto90()
-        # 开合
-        for i in range (0):
-            for i in range (10):
-                leg_left.angle = leg_left.angle + 3
-                leg_right.angle = leg_right.angle - 3
-                foot_right.angle = foot_right.angle + 3
-                foot_left.angle = foot_left.angle - 3
+    # while move5:
+    resetto90()
+    # 开合
+    # for i in range (0):
+    for i in range (10):
+        leg_left.angle = leg_left.angle + 3
+        leg_right.angle = leg_right.angle - 3
+        foot_right.angle = foot_right.angle + 3
+        foot_left.angle = foot_left.angle - 3
 
-            for i in range (10):
-                leg_left.angle = leg_left.angle - 3
-                leg_right.angle = leg_right.angle + 3    
-                foot_right.angle = foot_right.angle - 3
-                foot_left.angle = foot_left.angle + 3
+    for i in range (10):
+        leg_left.angle = leg_left.angle - 3
+        leg_right.angle = leg_right.angle + 3    
+        foot_right.angle = foot_right.angle - 3
+        foot_left.angle = foot_left.angle + 3
+    
+    resetto90()
+    #左右
+    # for i in range (0):
+    for i in range (20):
+        leg_left.angle = leg_left.angle - 2
+        leg_right.angle = leg_right.angle - 2
+        
+    for i in range (21):
+        leg_left.angle = leg_left.angle + 4
+        leg_right.angle = leg_right.angle + 4
+        
+    for i in range (20):
+        leg_left.angle = leg_left.angle - 2
+        leg_right.angle = leg_right.angle - 2
             
-            resetto90()
-        #左右
-        for i in range (0):
-            for i in range (20):
-                leg_left.angle = leg_left.angle - 2
-                leg_right.angle = leg_right.angle - 2
-                
-            for i in range (21):
-                leg_left.angle = leg_left.angle + 4
-                leg_right.angle = leg_right.angle + 4
-               
-            for i in range (20):
-                leg_left.angle = leg_left.angle - 2
-                leg_right.angle = leg_right.angle - 2
-                
-        #slide right
-        for i in range (3):
-            for i in range (10):
-                foot_right.angle = foot_right.angle + 2
-                foot_left.angle = foot_left.angle + 4
-            time.sleep(1)
-            for i in range (10):
-                foot_right.angle = foot_right.angle - 6
-                foot_left.angle = foot_left.angle + 4
-
-            for i in range (10):
-                foot_right.angle = foot_right.angle - 2
-                foot_left.angle = foot_left.angle - 8
-
-            for i in range (10):
-                foot_right.angle = foot_right.angle + 6
+    #slide right
+    for i in range (3):
+        for i in range (10):
+            foot_right.angle = foot_right.angle + 2
+            foot_left.angle = foot_left.angle + 4
         time.sleep(1)
-        resetto90()
-        #slide left
-        for i in range (3):
-            for i in range (10):
-                foot_right.angle = foot_right.angle - 4
-                foot_left.angle = foot_left.angle - 2            
-            time.sleep(1)
+        for i in range (10):
+            foot_right.angle = foot_right.angle - 6
+            foot_left.angle = foot_left.angle + 4
 
-            for i in range (10):
-                foot_right.angle = foot_right.angle - 4
-                foot_left.angle = foot_left.angle + 5
+        for i in range (10):
+            foot_right.angle = foot_right.angle - 2
+            foot_left.angle = foot_left.angle - 8
 
-            for i in range (10):
-                foot_right.angle = foot_right.angle + 8
-                foot_left.angle = foot_left.angle + 2
+        for i in range (10):
+            foot_right.angle = foot_right.angle + 6
+    time.sleep(1)
+    resetto90()
+    #slide left
+    for i in range (3):
+        for i in range (10):
+            foot_right.angle = foot_right.angle - 4
+            foot_left.angle = foot_left.angle - 2            
+        time.sleep(1)
 
-            for i in range (10):
-                foot_left.angle = foot_left.angle - 5
-        return
+        for i in range (10):
+            foot_right.angle = foot_right.angle - 4
+            foot_left.angle = foot_left.angle + 5
+
+        for i in range (10):
+            foot_right.angle = foot_right.angle + 8
+            foot_left.angle = foot_left.angle + 2
+
+        for i in range (10):
+            foot_left.angle = foot_left.angle - 5
 
 #-----------------------------------MOVE 6---------------------------------------------
 def move_set6():
 
-    while move6:
-        resetto90()
-        time.sleep(0.5)
+    # while move6:
+    resetto90()
+    time.sleep(0.5)
 
-        #turn lefy
-        for angle in range(90, 10, -39):
-            foot_right.angle = angle
-            time.sleep(0.05)
-        for angle in range(92, 32, -19):
-            foot_left.angle = angle
-            time.sleep(0.05)
-        #  \\
+    #turn lefy
+    for angle in range(90, 10, -39):
+        foot_right.angle = angle
+        time.sleep(0.05)
+    for angle in range(92, 32, -19):
+        foot_left.angle = angle
+        time.sleep(0.05)
+    #  \\
 
-        time.sleep(0.1)
-        foot_right.angle = 120 #lift up outward
-        time.sleep(1)
-        leg_right.angle =  32 #kick
-        time.sleep(0.1)
+    time.sleep(0.1)
+    foot_right.angle = 120 #lift up outward
+    time.sleep(1)
+    leg_right.angle =  32 #kick
+    time.sleep(0.1)
 
 
-        for angle in range(90, 30, -3):
-            leg_left.angle =  angle
-            time.sleep(0.05)
-        for angle in range(32, 102, 3):
-            leg_right.angle =  angle
-            time.sleep(0.05)
-        for angle in range(32, 92, 19):
-            foot_left.angle = angle
-            time.sleep(0.05)
-        for angle in range(120, 89, -10):
-            foot_right.angle = angle
-            time.sleep(0.05)
-        for angle in range(30, 90, 3):
-            leg_left.angle =  angle
-            time.sleep(0.05)
-        resetto90()
-        break
+    for angle in range(90, 30, -3):
+        leg_left.angle =  angle
+        time.sleep(0.05)
+    for angle in range(32, 102, 3):
+        leg_right.angle =  angle
+        time.sleep(0.05)
+    for angle in range(32, 92, 19):
+        foot_left.angle = angle
+        time.sleep(0.05)
+    for angle in range(120, 89, -10):
+        foot_right.angle = angle
+        time.sleep(0.05)
+    for angle in range(30, 90, 3):
+        leg_left.angle =  angle
+        time.sleep(0.05)
+    resetto90()
+        
 
 #-----------------------------END OF MOVE SETS FUNCTIONS SECTION----------------------------------
 
@@ -482,7 +481,23 @@ rows = [digitalio.DigitalInOut(x) for x in (board.TX, board.SCL, board.A5)]
 keys = ((1, 2, 3), (4, 5, 6), (7, 8, 9))
 
 keypad = adafruit_matrixkeypad.Matrix_Keypad(rows, cols, keys)
-#---------------------------------------
+#----------------------------HELPER FUNCTIONS----------------------------------------------------
+#helper function to perform individual move 3 times
+def performing_individual(move):
+    #perform 3 times
+    for i in range(0, 3, 1):
+        if (move == 1):
+            move_set1()
+        elif (move == 2):
+            move_set2()
+        elif (move == 3):
+            move_set3()
+        elif (move == 4):
+            move_set4()
+        elif (move == 5):
+            move_set5()
+        elif (move == 6):
+            move_set6()
 #helper function to perform user move sequence
 def performing_sequence(move_sequence):
     number_of_move = min(len(move_sequence), 10)
@@ -516,14 +531,30 @@ def performing_all(direction):
         move_set3()
         move_set2()
         move_set1()
+#----------------------------------------END OF HELPER FUNCTIONS SECTION---------------------------------------------- 
+#-------------------------------------------------------MAIN PROGRAM--------------------------------------------------
+# User can choose for the robot to perform either 1 move, a sequence of move (order specified by user) or perfroming all the move sets at once(reverse or forward)
+# At main menu on the LCD, press 1 or 2 to choose between perform sequence/individual mode and perform all mode
+# Choose 1: navigate to sub menu 1
+#    Sub menu 1:
+#       - Selecting keys from 1 -> 6 to choose the corresponding move set
+#       - Choosing more than once to customize the sequence of move to perform (choose one to perform only one move)
+#       - After choosing, presssing key '7' to start performing
+#       - Pressing key '9' to go back to main menu
+# 
+# Choose 2: navigate to sub menu 2:
+#    Sub menu 2:
+#       - Pressing key '7' to perfrom all moves in the forward direction (1 -> 6)
+#       - Pressing key '8' to perform all moves in the reverse direction (6 -> 1)
+#       - Pressing key '9' to go back to the main menu
 
-#-------------------------------MAIN PROGRAM-----------------------------------
+# At the main menu, pressing key '9' to turn off the robot
+
+
 move_sequence = []
-
 Mar6_TCD.main_menu_display()
 Mar6_TCD.sub_menu1_display()
 Mar6_TCD.sub_menu2_display()
-#keeps reading the input until user press key '7'
 while True:
     main_keys = keypad.pressed_keys
     Mar6_TCD.display.show(Mar6_TCD.main_menu)
@@ -534,7 +565,7 @@ while True:
 
         if main_keys:
             time.sleep(0.2)
-            # [1] to navigate to the sub menu to choose user's own move sequence
+            # [1] to navigate to the sub menu for user to customize their own move sequence
             if main_keys == [1]:
                 Mar6_TCD.main_button_active(1)
                 Mar6_TCD.display.show(Mar6_TCD.sub_menu1)
@@ -543,44 +574,54 @@ while True:
                 while (True):
                     keys = keypad.pressed_keys
                     # waiting for user's inputs
+                    # user chooses move by selecting 1 -> 6 on key pad
                     if keys:
                         time.sleep(0.2)
+                        #press 1 -> 6 to select move set
                         if (keys == [1]):
                             Mar6_TCD.sub_button1_active(1)
-                            move_sequence.append("1")
+                            move_sequence.append(1)
                         elif (keys == [2]):
                             Mar6_TCD.sub_button1_active(2)
-                            move_sequence.append("2")
+                            move_sequence.append(2)
                         elif (keys == [3]):
                             Mar6_TCD.sub_button1_active(3)
-                            move_sequence.append("3")
+                            move_sequence.append(3)
                         elif (keys == [4]):
                             Mar6_TCD.sub_button1_active(4)
-                            move_sequence.append("4")
+                            move_sequence.append(4)
                         elif (keys == [5]):
                             Mar6_TCD.sub_button1_active(5)
-                            move_sequence.append("5")
+                            move_sequence.append(5)
                         elif (keys == [6]):
                             Mar6_TCD.sub_button1_active(6)
-                            move_sequence.append("6")
-                        elif (keys == [7]):
-                            if (len(move_sequence) >= 1):
+                            move_sequence.append(6)
+
+                        # press key "7" to start playing
+                        elif (keys == [7]):  
+                            # if only 1 move is chosen, perform it 3 times
+                            if (len(move_sequence == 1)):
+                                performing_individual(move_sequence[0])
+                            # if more than 1 move are chosen, perform the moves in the order of choosing
+                            elif (len(move_sequence) > 1):
                                 print("Playing Move Sequence")
                                 performing_sequence(move_sequence)
+                            #do nothing if no move are chosen
                             else:
                                 print("Nothing to perform")
                             move_sequence.clear()
+
+                        #go back to the main menu by pressing 9
                         elif keys == [9]:
                             print("Terminated")
-                            break #go back to the main menu
+                            break 
                         else :
                             Mar6_TCD.error_display(Mar6_TCD.sub_menu1)
             
-            #[2] navigate to sub menu 2 on the LCD to choose the direction of performing all the moves
+            #press [2] to navigate to sub menu 2 on the LCD to go to performing all the moves mode
             elif (main_keys == [2]):
                 Mar6_TCD.main_button_active(2)
                 Mar6_TCD.display.show(Mar6_TCD.sub_menu2)
-
                 #sub_menu2
                 while True:
                     keys = keypad.pressed_keys
@@ -590,13 +631,16 @@ while True:
                     elif (keys == [8]):
                         Mar6_TCD.sub_button2_active(8)
                         performing_all('r') #perform all the moves in the reverse direction (6 -> 1)
+                    #press 9 to go back to main menu
                     elif keys == [9]:
-                        break #go back to main menu
+                        break
+                    #display error if select other keys
                     else :
                         Mar6_TCD.error_display(Mar6_TCD.sub_menu2)
 
+            #At main menu, press 9 to turn off the robot
             elif main_keys == [9]:
-                break #turn off the robot
+                break
 
             else :
                 Mar6_TCD.error_display(Mar6_TCD.main_menu)
