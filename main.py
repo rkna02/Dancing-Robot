@@ -25,7 +25,7 @@ tft_dc = board.D7
 
 display_bus = displayio.FourWire(
     spi, command=tft_dc, chip_select=tft_cs, reset=board.D0)
-display = ST7735R(display_bus, width=128, height=128, rotation=90)
+display = ST7735R(display_bus, width=128, height=128, rotation=270)
 
 splash = displayio.Group()
 display.show(splash)
@@ -225,7 +225,8 @@ def sub_menu2_display():
 
 
 def error_display():
-    """ Displays error message on LCD screen when an invalid button is pressed
+    """ 
+        Displays error message on LCD screen when an invalid button is pressed
         Different buttons can be invalid based on the current menu
         Please see menu functions for specific details
     """
@@ -246,6 +247,28 @@ def error_display():
     time.sleep(2)
     splash.pop()
     splash.pop()
+
+def move_display(movename):
+    """
+        Displays the move name before performing a dance move
+    """
+    
+    color_bitmap = displayio.Bitmap(128, 128, 1)
+    color_palette = displayio.Palette(1)
+    color_palette[0] = 0x221D61  # Dark blue as background
+    bg_sprite = displayio.TileGrid(
+        color_bitmap, pixel_shader=color_palette, x=0, y=0)
+    splash.append(bg_sprite)
+
+    text_error = label.Label(
+        terminalio.FONT, text=f"Loading:\n{movename}\n", color=0xFFFFFF, scale=2, x=20, y=30)
+    splash.append(text_error)
+
+    # shows error message for 2 seconds then erases it
+    time.sleep(1.3)
+    splash.pop()
+    splash.pop()
+    
 
 
 def clear_menu(menu):
@@ -438,7 +461,7 @@ def loading(image, dir):
 
 def loading_movie(image, dir):
     """
-        shows the loading screen before playing mini movie
+        shows the loading screen before playing the mini movie
         PARAM image: image reference number
         PARAM dir: image directory
     """
@@ -533,6 +556,7 @@ move6 = True
 def move_set1():
     note = 0
     count = 0
+    gc.collect()
     loading(0, "/GIF/gif1/")
     while move1:
         if count != 0:
@@ -609,7 +633,7 @@ def move_set1():
         if count == 3:
             # move1 = False
             break
-            
+
     gc.collect()
     splash.pop()
 
@@ -618,6 +642,7 @@ def move_set1():
 def move_set2():
     note = 48
     count = 0
+    gc.collect()
     loading(1, "/GIF/gif2/")
     while move2:
         initial()
@@ -659,7 +684,7 @@ def move_set2():
         simpleio.tone(PIEZO_PIN, melody1[note], 0.5)
         # move2 = False
         break
-        
+
     gc.collect()
     splash.pop()
 
@@ -668,6 +693,7 @@ def move_set2():
 def move_set3():
     note = 0
     count = 0
+    gc.collect()
     loading(0, "GIF/gif3/")
     while move3:
         initial()
@@ -697,7 +723,7 @@ def move_set3():
         gc.collect()
         loading(1, "GIF/gif3/")
         splash.pop(0)
-        
+
         for angle in range(clegr-50, clegr+21, 7):  # shake
             leg_right.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
@@ -747,7 +773,7 @@ def move_set3():
         gc.collect()
         loading(1, "GIF/gif3/")
         splash.pop(0)
-        
+
         for angle in range(clegl+50, clegl-21, -7):  # shake
             leg_left.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
@@ -768,7 +794,7 @@ def move_set3():
         if count == 2:
             #move3 = False
             break
-        
+
     gc.collect()
     splash.pop()
 
@@ -777,6 +803,7 @@ def move_set3():
 def move_set4():
     note = 0
     count = 0
+    gc.collect()
     loading(0, "/GIF/gif4/")
     while move4:
         initial()
@@ -804,7 +831,7 @@ def move_set4():
         gc.collect()
         loading(1, "GIF/gif4/")
         splash.pop(0)
-        
+
         for i in range(20):
             leg_left.angle = leg_left.angle + 2
             foot_left.angle = foot_left.angle - 2
@@ -870,9 +897,9 @@ def move_set4():
             note = note + 2
             simpleio.tone(PIEZO_PIN, melody1[note], 1)
             resetto90()
-        
+
             break
-            
+
         gc.collect()
     gc.collect()
     splash.pop()
@@ -883,6 +910,7 @@ def move_set4():
 def move_set5():
     note = 0
     count = 0
+    gc.collect()
     loading(0, "GIF/gif5/")
     while move5:
         initial()
@@ -942,7 +970,7 @@ def move_set5():
             gc.collect()
             loading(1, "GIF/gif5/")
             splash.pop(0)
-            
+
             if count == 1 and a == 2:
                 note = note
             else:
@@ -967,7 +995,7 @@ def move_set5():
         count = count + 1
         if count == 2:
             break
-            
+
         gc.collect()
     gc.collect()
     splash.pop()
@@ -976,6 +1004,7 @@ def move_set5():
 # -----------------------------------MOVE 6---------------------------------------------
 def move_set6():
     note = 0
+    gc.collect()
     loading(0, "/GIF/gif6/")
     while move6:
         initial()
@@ -990,11 +1019,11 @@ def move_set6():
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
         gc.collect()
         #  \\
-        
+
         simpleio.tone(PIEZO_PIN, melody2[note], 0.1)
         foot_right.angle = cfootr+50  # lift up outward
         simpleio.tone(PIEZO_PIN, melody2[note], 0.1)
-        
+
         loading(1, "/GIF/gif6/")
         splash.pop(0)
         count = 0
@@ -1016,7 +1045,7 @@ def move_set6():
                 leg_left.angle = angle
                 simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
             gc.collect()
-            
+
             if count % 2 == 0:
                 loading(0, "/GIF/gif6/")
             else:
@@ -1066,18 +1095,18 @@ def move_set6():
                 leg_right.angle = angle
                 simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
             gc.collect()
-            
+
             if count % 2 == 0:
                 loading(1, "/GIF/gif6/")
             else:
                 loading(0, "/GIF/gif6/")
             splash.pop(0)
             count = count + 1
-        
+
         gc.collect()
         resetto90()
         break
-    
+
     gc.collect()
     splash.pop()
 
@@ -1107,34 +1136,59 @@ def performing_individual(move):
     # perform 3 times
     for i in range(0, 1, 1):
         if (move == 1):
+            move_display("Tip top")
+            gc.collect()
             move_set1()
         elif (move == 2):
+            move_display("Happy\nwander")
+            gc.collect()
             move_set2()
         elif (move == 3):
+            move_display("Cute\nkick")
+            gc.collect()
             move_set3()
         elif (move == 4):
+            move_display("Beat\nwalking")
+            gc.collect()
             move_set4()
         elif (move == 5):
+            move_display("Slide")
+            gc.collect()
             move_set5()
         elif (move == 6):
+            move_display("Nodding")
+            gc.collect()
             move_set6()
-# helper function to perform user move sequence
+            
 
+# helper function to perform user move sequence
 
 def performing_sequence(move_sequence):
     number_of_move = min(len(move_sequence), 10)
     for i in range(0, number_of_move, 1):
         if (move_sequence[i] == 1):
+            move_display("Tip top")
+            gc.collect()
             move_set1()
         elif (move_sequence[i] == 2):
+            move_display("Happy\nwander")
+            gc.collect()
             move_set2()
         elif (move_sequence[i] == 3):
+            move_display("Cute\nkick")
+            gc.collect()
             move_set3()
         elif (move_sequence[i] == 4):
+            move_display("Beat\nwalking")
+            gc.collect()
             move_set4()
         elif (move_sequence[i] == 5):
+            move_display("Slide")
+            gc.collect()
             move_set5()
         elif (move_sequence[i] == 6):
+            move_display("Nodding")
+            gc.collect()
             move_set6()
 
 # helper function to perform all moves sequentially in the direction specified by user
@@ -1161,7 +1215,7 @@ def performing_all(direction):
         move_set3()
         move_set2()
         move_set1()
-        
+
 # ----------------------------------------END OF HELPER FUNCTIONS SECTION----------------------------------------------
 
 
@@ -1261,7 +1315,7 @@ while True:
                         # do nothing if no move are chosen
                         else:
                             print("Nothing to perform")
-                            
+
                         gc.collect()
                         move_sequence.clear()
                         gc.collect()
@@ -1281,7 +1335,7 @@ while True:
                         gc.collect()
                         error_display()
                         gc.collect()
-                        
+
                     gc.collect()
                 gc.collect()
             gc.collect()
@@ -1336,7 +1390,7 @@ while True:
                         gc.collect()
                         error_display()
                         gc.collect()
-                        
+
                     gc.collect()
                     sub_menu2_display()
                     gc.collect()
@@ -1351,7 +1405,7 @@ while True:
             gc.collect()
             error_display()
             gc.collect()
-            
+
         gc.collect()
     gc.collect()
 
