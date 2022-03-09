@@ -1,4 +1,4 @@
-import time  
+import time
 import board
 import pwmio
 import pulseio
@@ -7,6 +7,7 @@ from adafruit_motor import servo
 
 import terminalio
 import displayio
+import adafruit_imageload
 from adafruit_display_text import label
 from adafruit_st7735r import ST7735R
 import os
@@ -16,7 +17,9 @@ import adafruit_matrixkeypad
 
 import buzzer
 
-# import gc
+import gc
+
+gc.enable()
 
 # display set up and initialization
 displayio.release_displays()
@@ -30,6 +33,7 @@ display = ST7735R(display_bus, width=128, height=128, rotation=90)
 
 splash = displayio.Group()
 display.show(splash)
+
 
 def main_menu_display():
     """
@@ -216,17 +220,152 @@ def error_display():
 
 
 def clear_menu(menu):
-    """ Clears everything from the current menu 
-        Only keeps the background, which is the same for every menu
+    """
+        Clears everything from the current menu
         PARAM menu: must be one of the strings "main_menu", "sub_menu1", "sub_menu2"
     """
 
     if menu == "sub_menu1":
-        for i in range(0, 11):
+        for i in range(0, 14):
             splash.pop()
     elif menu == "main_menu" or menu == "sub_menu2":
-        for i in range(0, 8):
+        for i in range(0, 9):
             splash.pop()
+
+
+def main_button_active(button):
+    """
+        Changes the color of button1 or button2 in the main menu when pressed
+        The color changes for 0.4 seconds then goes back to its original color
+        PARAM button: the button reference number that will modify the corresponding button color
+    """
+
+    button_bitmap = displayio.Bitmap(20, 55, 1)
+    description_bitmap = displayio.Bitmap(95, 55, 1)
+
+    button_palette = displayio.Palette(1)
+    button_palette[0] = 0xE0A50B  # yellow buttons
+    description_palette = displayio.Palette(1)
+    description_palette[0] = 0x946B00  # gold description
+
+    if button == 1:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=8, y=6)
+        description_sprite = displayio.TileGrid(description_bitmap, pixel_shader=description_palette, x=28, y=6)
+
+        # set up button and description texts
+        text = label.Label(terminalio.FONT, text="1", scale=3, color=0xFFFFFF, x=11, y=30)
+        text_description = label.Label(terminalio.FONT, text="Choose a\nsequence of\ndance moves!", color=0xFFFFFF,
+                                       x=32,
+                                       y=15)
+        splash.append(button_sprite)
+        splash.append(description_sprite)
+        splash.append(text)
+        splash.append(text_description)
+    elif button == 2:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=8, y=66)
+        description_sprite = displayio.TileGrid(description_bitmap, pixel_shader=description_palette, x=28, y=66)
+
+        # set up button and description texts
+        text = label.Label(terminalio.FONT, text="2", scale=3, color=0xFFFFFF, x=11, y=90)
+        text_description = label.Label(terminalio.FONT, text="Perform all\ndance moves", color=0xFFFFFF, x=32,
+                                       y=75)
+        splash.append(button_sprite)
+        splash.append(description_sprite)
+        splash.append(text)
+        splash.append(text_description)
+
+    time.sleep(0.4)
+    splash.pop()
+    splash.pop()
+    splash.pop()
+    splash.pop()
+
+
+def sub_button1_active(button):
+    """ Changes the color of a button when its corresponding dance move is being performed by the robot """
+
+    button_bitmap = displayio.Bitmap(36, 36, 1)
+    button_palette = displayio.Palette(1)
+    button_palette[0] = 0xF0CF89  # yellow buttons
+
+    if button == 1:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=7, y=35)
+        text = label.Label(terminalio.FONT, text="1", scale=2, color=0xFFFFFF, x=20, y=51)
+        splash.append(button_sprite)
+        splash.append(text)
+    elif button == 2:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=48, y=35)
+        text = label.Label(terminalio.FONT, text="2", scale=2, color=0xFFFFFF, x=61, y=51)
+        splash.append(button_sprite)
+        splash.append(text)
+    elif button == 3:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=89, y=35)
+        text = label.Label(terminalio.FONT, text="3", scale=2, color=0xFFFFFF, x=102, y=51)
+        splash.append(button_sprite)
+        splash.append(text)
+    elif button == 4:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=7, y=75)
+        text = label.Label(terminalio.FONT, text="4", scale=2, color=0xFFFFFF, x=20, y=91)
+        splash.append(button_sprite)
+        splash.append(text)
+    elif button == 5:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=48, y=75)
+        text = label.Label(terminalio.FONT, text="5", scale=2, color=0xFFFFFF, x=61, y=91)
+        splash.append(button_sprite)
+        splash.append(text)
+    elif button == 6:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=89, y=75)
+        text = label.Label(terminalio.FONT, text="6", scale=2, color=0xFFFFFF, x=102, y=91)
+        splash.append(button_sprite)
+        splash.append(text)
+
+    time.sleep(0.5)
+    splash.pop()
+    splash.pop()
+
+
+def sub_button2_active(button):
+    button_bitmap = displayio.Bitmap(20, 55, 1)
+    description_bitmap = displayio.Bitmap(95, 55, 1)
+
+    button_palette = displayio.Palette(1)
+    button_palette[0] = 0xE0A50B  # yellow buttons
+    description_palette = displayio.Palette(1)
+    description_palette[0] = 0x946B00  # gold description
+
+    if button == 7:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=8, y=6)
+        description_sprite = displayio.TileGrid(description_bitmap, pixel_shader=description_palette, x=28, y=6)
+
+        # set up button and description texts
+        text = label.Label(terminalio.FONT, text="7", scale=3, color=0xFFFFFF, x=11, y=30)
+        text_description = label.Label(
+            terminalio.FONT, text="Perform\ndances from\ndance1->dance6", color=0xFFFFFF, x=32, y=15
+        )
+        splash.append(button_sprite)
+        splash.append(description_sprite)
+        splash.append(text)
+        splash.append(text_description)
+
+    elif button == 8:
+        button_sprite = displayio.TileGrid(button_bitmap, pixel_shader=button_palette, x=8, y=66)
+        description_sprite = displayio.TileGrid(description_bitmap, pixel_shader=description_palette, x=28, y=66)
+
+        # set up button and description texts
+        text = label.Label(terminalio.FONT, text="8", scale=3, color=0xFFFFFF, x=11, y=90)
+        text_description = label.Label(
+            terminalio.FONT, text="Perform\ndance from\ndance6->dance1", color=0xFFFFFF, x=32, y=75
+        )
+        splash.append(button_sprite)
+        splash.append(description_sprite)
+        splash.append(text)
+        splash.append(text_description)
+
+    time.sleep(0.5)
+    splash.pop()
+    splash.pop()
+    splash.pop()
+    splash.pop()
 
 
 def loading(move):
@@ -238,38 +377,60 @@ def loading(move):
     # directory on CIRCUITPY where BMP animation frames are stored
     GIF_files = os.listdir("/GIF/loading")
     count = 0
-
+    
     for name in GIF_files:
         filename = "/GIF/loading" + "/" + name
         bitmap, palette = adafruit_imageload.load(filename, bitmap=displayio.Bitmap, palette=displayio.Palette)
         tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)  # Create a TileGrid to hold the bitmap
         move_name = "MOVE " + move
-        text = label.Label(terminalio.FONT, text=move_name, color=0x000000, scale=2, x=15, y=100)
+        text = label.Label(terminalio.FONT, text=move_name, color=0x000000, scale=2, x=33, y=12)
         splash.append(tile_grid)  # Add the TileGrid to the Group
         splash.append(text)
-        count = count + 1
-        print("after frame")
-        print(count)
-        print(gc.mem_free())
-
+        print("append")
+        count = count + 2
+        if count >= 4:
+            splash.pop(0)
+            splash.pop(0)
+            print("pop")
+            print(count)
+        if count == 8:
+            time.sleep(0.5)
+            break
+    splash.pop()
+    splash.pop()
+    
+    """
+    for name in GIF_files:
+        filename = "/GIF/loading" + "/" + name
+        bitmap, palette = adafruit_imageload.load(filename, bitmap=displayio.Bitmap, palette=displayio.Palette)
+        tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)  # Create a TileGrid to hold the bitmap
+        move_name = "MOVE " + move
+        text = label.Label(terminalio.FONT, text=move_name, color=0x000000, scale=2, x=33, y=12)
+        splash.append(tile_grid)  # Add the TileGrid to the Group
+        splash.append(text)
+        count = count + 2
+        
     for i in range(0, count):
         splash.pop()
+    """
 
 
 print("begin program")
 print(gc.mem_free())
 while True:
     main_menu_display()
+    gc.collect()
     print("after set up main menu")
     print(gc.mem_free())
-    time.sleep(2)
+    time.sleep(1)
 
-    clear("main_menu")
+    clear_menu("main_menu")
+    gc.collect()
     print("after clear")
     print(gc.mem_free())
-    time.sleep(2)
 
     loading("1")
+    gc.collect()
     print("after displaying gif")
     print(gc.mem_free())
-    sleep(1000)
+
