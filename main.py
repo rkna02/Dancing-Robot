@@ -1,4 +1,5 @@
 import time
+import gc
 import board
 import pwmio
 import pulseio
@@ -11,9 +12,12 @@ from adafruit_display_text import label
 from adafruit_st7735r import ST7735R
 import digitalio
 import adafruit_matrixkeypad
-import buzzer
-import gc
 
+
+"""------------------------------MAIN FUNCTIONALITY: LCD DISPLAY SET UP AND FUNCTIONS--------------------------------"""
+"""------includes ADDITIONAL FUNCTIONALITIES: displaying GIFs and mini movie, user interactive menu and buttons------"""
+"""--NOTE: move_display and error_display are the only MAIN FUNCTIONALITIES, others are ADDITIONAL FUNCTIONALITIES---"""
+# enable automatic garbage collection to save memory
 gc.enable()
 
 # display set up and initialization
@@ -36,8 +40,8 @@ def main_menu_display():
         Displays the main menu of the robot with bitmaps and texts
         Prompts user for a key from 1-2 and performs their corresponding actions
         If other keys are pressed, display will show an error
-        1 - navigates user to a new page where the user can choose individual dance moves to perform
-        2 - navigates user to a new page where the user can choose to perform all dance moves in order/in reverse order
+        1 - navigates user to a new page where the user can choose a sequence of dance moves to perform
+        2 - navigates user to a new page where the user can choose to perform all dance moves or play mini movie
     """
 
     # set up bitmaps for backgrounds
@@ -93,8 +97,9 @@ def main_menu_display():
 
 def sub_menu1_display():
     """
-        Displays the menu when user choosess option 1 from the main menu of the robot
-        Prompts user for a key from 1-6 and performs the corresponding dance moves
+        Displays the menu when user chooses option 1 from the main menu of the robot
+        Prompts user for keys from 1-6 and performs the corresponding sequence of dance moves
+        Press 7 at the end to queue all the dance moves selected, press 9 to go back to main menu
         If other keys are pressed, display will show an error
     """
 
@@ -168,7 +173,9 @@ def sub_menu1_display():
 def sub_menu2_display():
     """
         Displays the menu when user chooses option 2 from the main menu of the robot
-        Prompts user for a key from 7-8 and performs the corresponding dance moves
+        Prompts user for a key from 7-8 and performs the corresponding dance moves/shows short clip
+        7: performs dance moves 1-6 in ascending order
+        8: plays a short clip/GIF on the LCD
         If other keys are pressed, display will show an error
     """
 
@@ -225,7 +232,7 @@ def sub_menu2_display():
 
 
 def error_display():
-    """ 
+    """
         Displays error message on LCD screen when an invalid button is pressed
         Different buttons can be invalid based on the current menu
         Please see menu functions for specific details
@@ -248,11 +255,13 @@ def error_display():
     splash.pop()
     splash.pop()
 
+
 def move_display(movename):
     """
         Displays the move name before performing a dance move
+        :param movename: integer from 1-6 referring to corresponding dance moves 1-6
     """
-    
+
     color_bitmap = displayio.Bitmap(128, 128, 1)
     color_palette = displayio.Palette(1)
     color_palette[0] = 0x221D61  # Dark blue as background
@@ -268,13 +277,12 @@ def move_display(movename):
     time.sleep(1.3)
     splash.pop()
     splash.pop()
-    
 
 
 def clear_menu(menu):
     """
-        Clears everything from the current menu
-        PARAM menu: must be one of the strings "main_menu", "sub_menu1", "sub_menu2"
+        Clears everything from the current menu to save memory when switching menus
+        :param menu: must be one of the strings "main_menu", "sub_menu1", "sub_menu2"
     """
 
     if menu == "sub_menu1":
@@ -289,7 +297,9 @@ def main_button_active(button):
     """
         Changes the color of button1 or button2 in the main menu when pressed
         The color changes for 0.4 seconds then goes back to its original color
-        PARAM button: the button reference number that will modify the corresponding button color
+        :param button: the button reference number that will modify the corresponding button color,
+                       1 if refering to button1 and 2 if referring to button2,
+                       otherwise error message will show
     """
 
     button_bitmap = displayio.Bitmap(20, 55, 1)
@@ -340,7 +350,12 @@ def main_button_active(button):
 
 
 def sub_button1_active(button):
-    """ Changes the color of a button when its corresponding dance move is being performed by the robot """
+    """
+        For sub menu1, changes the color of a button when its corresponding dance move is being performed
+        The button will change from light blue to gold
+        :param button: the button whose color is going to be changed
+                       requires: integer in range [1, 6]
+    """
 
     button_bitmap = displayio.Bitmap(36, 36, 1)
     button_palette = displayio.Palette(1)
@@ -395,6 +410,13 @@ def sub_button1_active(button):
 
 
 def sub_button2_active(button):
+    """
+        For sub menu2, change the color of a button when its corresponding dance move is being performed
+        The buttons will change from blue to yellow/gold
+        :param button: the button whose color is going to be changed
+                       requires: integer in range [1, 2]
+    """
+
     button_bitmap = displayio.Bitmap(20, 55, 1)
     description_bitmap = displayio.Bitmap(95, 55, 1)
 
@@ -444,14 +466,15 @@ def sub_button2_active(button):
     splash.pop()
 
 
-def loading(image, dir):
+def loading(image, directory):
     """
-        shows the loading screen before performing dance moves
-        PARAM image: 0 or 1, image reference number
-        PARAM dir: image directory
+        Loads one instance of a GIF that consists of 2 bmp files for display
+        :param image: the reference number to an image
+                      requires: 0 or 1
+        :param directory: the GIF directory where the bmp files are saved
     """
 
-    filename = f"{dir}/upload{image}.bmp"
+    filename = f"{directory}/upload{image}.bmp"
     bitmap, palette = adafruit_imageload.load(
         filename, bitmap=displayio.Bitmap, palette=displayio.Palette)
     # Create a TileGrid to hold the bitmap
@@ -459,14 +482,15 @@ def loading(image, dir):
     splash.append(tile_grid)  # Add the TileGrid to the Group
 
 
-def loading_movie(image, dir):
+def loading_movie(image, directory):
     """
-        shows the loading screen before playing the mini movie
-        PARAM image: image reference number
-        PARAM dir: image directory
+        Displays a mini movie fully
+        :param image: image reference number
+                      requires: > 0 and <= number of bmp files in GIF directory
+        :param directory: GIF directory where the bmp files are stored 
     """
 
-    filename = f"{dir}/upload ({image}).bmp"
+    filename = f"{directory}/upload ({image}).bmp"
     bitmap, palette = adafruit_imageload.load(
         filename, bitmap=displayio.Bitmap, palette=displayio.Palette)
     # Create a TileGrid to hold the bitmap
@@ -474,13 +498,134 @@ def loading_movie(image, dir):
     splash.append(tile_grid)  # Add the TileGrid to the Group
 
 
+"""-------------------------------ADDITIONAL FUNCTIONALITY: BUZZER MUSIC SET UP-------------------------------------"""
+# Define pin connected to piezo buzzer.
+PIEZO_PIN = board.A1
+
+# We wish you a merry christmas
+NOTE_B0  = 31
+NOTE_C1  = 33
+NOTE_CS1 = 35
+NOTE_D1  = 37
+NOTE_DS1 = 39
+NOTE_E1  = 41
+NOTE_F1  = 44
+NOTE_FS1 = 46
+NOTE_G1  = 49
+NOTE_GS1 = 52
+NOTE_A1  = 55
+NOTE_AS1 = 58
+NOTE_B1  = 62
+NOTE_C2  = 65
+NOTE_CS2 = 69
+NOTE_D2  = 73
+NOTE_DS2 = 78
+NOTE_E2  = 82
+NOTE_F2  = 87
+NOTE_FS2 = 93
+NOTE_G2  = 98
+NOTE_GS2 = 104
+NOTE_A2  = 110
+NOTE_AS2 = 117
+NOTE_B2  = 123
+NOTE_C3  = 131
+NOTE_CS3 = 139
+NOTE_D3  = 147
+NOTE_DS3 = 156
+NOTE_E3  = 165
+NOTE_F3  = 175
+NOTE_FS3 = 185
+NOTE_G3  = 196
+NOTE_GS3 = 208
+NOTE_A3  = 220
+NOTE_AS3 = 233
+NOTE_B3  = 247
+NOTE_C4  = 262
+NOTE_CS4 = 277
+NOTE_D4  = 294
+NOTE_DS4 = 311
+NOTE_E4  = 330
+NOTE_F4  = 349
+NOTE_FS4 = 370
+NOTE_G4  = 392
+NOTE_GS4 = 415
+NOTE_A4  = 440
+NOTE_AS4 = 466
+NOTE_B4  = 494
+NOTE_C5  = 523
+NOTE_CS5 = 554
+NOTE_D5  = 587
+NOTE_DS5 = 622
+NOTE_E5  = 659
+NOTE_F5  = 698
+NOTE_FS5 = 740
+NOTE_G5  = 784
+NOTE_GS5 = 831
+NOTE_A5  = 880
+NOTE_AS5 = 932
+NOTE_B5  = 988
+NOTE_C6  = 1047
+NOTE_CS6 = 1109
+NOTE_D6  = 1175
+NOTE_DS6 = 1245
+NOTE_E6  = 1319
+NOTE_F6  = 1397
+NOTE_FS6 = 1480
+NOTE_G6  = 1568
+NOTE_GS6 = 1661
+NOTE_A6  = 1760
+NOTE_AS6 = 1865
+NOTE_B6  = 1976
+NOTE_C7  = 2093
+NOTE_CS7 = 2217
+NOTE_D7  = 2349
+NOTE_DS7 = 2489
+NOTE_E7  = 2637
+NOTE_F7  = 2794
+NOTE_FS7 = 2960
+NOTE_G7  = 3136
+NOTE_GS7 = 3322
+NOTE_A7  = 3520
+NOTE_AS7 = 3729
+NOTE_B7  = 3951
+NOTE_C8  = 4186
+NOTE_CS8 = 4435
+NOTE_D8  = 4699
+NOTE_DS8 = 4978
+REST     = 0
+
+tempo = 2
+
+melody1 = [NOTE_C5,4,
+  NOTE_F5,4, NOTE_F5,8, NOTE_G5,8, NOTE_F5,8, NOTE_E5,8,
+  NOTE_D5,4, NOTE_D5,4, NOTE_D5,4,
+  NOTE_G5,4, NOTE_G5,8, NOTE_A5,8, NOTE_G5,8, NOTE_F5,8,
+  NOTE_E5,4, NOTE_C5,4, NOTE_C5,4,
+  NOTE_A5,4, NOTE_A5,8, NOTE_AS5,8, NOTE_A5,8, NOTE_G5,8,
+  NOTE_F5,4, NOTE_D5,4, NOTE_C5,8, NOTE_C5,8,
+  NOTE_D5,4, NOTE_G5,4, NOTE_E5,4,
+  NOTE_F5,2
+] #12s
+
+melody2 = [NOTE_C5,4,
+  NOTE_F5,4, NOTE_F5,4, NOTE_F5,4,
+  NOTE_E5,2, NOTE_E5,4,
+  NOTE_F5,4, NOTE_E5,4, NOTE_D5,4,
+  NOTE_C5,2, NOTE_A5,4,
+  NOTE_AS5,4, NOTE_A5,4, NOTE_G5,4,
+  NOTE_C6,4, NOTE_C5,4, NOTE_C5,8, NOTE_C5,8,
+  NOTE_D5,4, NOTE_G5,4, NOTE_E5,4,
+  NOTE_F5,2
+]
+
+
+"""--------------------MAIN FUNCTIONALITY: SET UP PINS FOR LEGS AND FOOTS AND HELPER FUNCTIONS-----------------------"""
 # define correct center angles:
 clegl = 90
 clegr = 102
 cfootl = 92
 cfootr = 94
 
-# ------------SET UP PINS FOR LEGS AND FOOTS----------------------------
 # create a PWMOut object on Pin D9-12.
 bot_left = pwmio.PWMOut(board.D9, duty_cycle=2 ** 15, frequency=50)
 bot_right = pwmio.PWMOut(board.D10, duty_cycle=2 ** 15, frequency=50)
@@ -495,8 +640,10 @@ foot_left = servo.Servo(bot_left)
 foot_right = servo.Servo(bot_right)
 
 
-# reset position fuction
+
 def resetto90():
+    """Resets the servos back to the robot's standing/idle position"""
+
     while leg_left.angle > clegl + 10:
         leg_left.angle = leg_left.angle - 10
         time.sleep(0.05)
@@ -532,18 +679,15 @@ def resetto90():
 
 
 def initial():
+    """Initialize the robot to be in its ready position before performing a dance"""
+
     leg_left.angle = clegl
     leg_right.angle = clegr
     foot_left.angle = cfootl
     foot_right.angle = cfootr
 
 
-# -----------------------SET UP MUSIC PINS-----------------------------------------------
-PIEZO_PIN = buzzer.PIEZO_PIN
-melody1 = buzzer.melody1
-melody2 = buzzer.melody2
-tempo = buzzer.tempo
-# -----------------------------------MOVE SETS FUNCTIONS----------------------------------
+"""--------------MAIN FUNCTIONALITY + ADDITIONAL FUNCTIONALITY: DANCE AND PLAY MUSIC AT THE SAME TIME----------------"""
 move1 = True
 move2 = True
 move3 = True
@@ -676,7 +820,7 @@ def move_set2():
             for angle in range(3):  # 60->90
                 foot_left.angle = foot_left.angle + 8
                 foot_right.angle = foot_right.angle + 8
-                simpleio.tone(PIEZO_PIN, melody1[note], 0.05)  # not tested
+                simpleio.tone(PIEZO_PIN, melody1[note], 0.05)
             gc.collect()
             count = count + 1
         gc.collect()
@@ -700,11 +844,11 @@ def move_set3():
         if count == 1:
             note = note + 2
         # right up
-        for angle in range(cfootr, cfootr-81, -40):
+        for angle in range(cfootr, cfootr - 81, -40):
             foot_right.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
         gc.collect()
-        for angle in range(cfootl, cfootl-61, -20):
+        for angle in range(cfootl, cfootl - 61, -20):
             foot_left.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
         gc.collect()
@@ -712,24 +856,24 @@ def move_set3():
         #  \\
         simpleio.tone(PIEZO_PIN, melody2[note], 0.25)
 
-        foot_right.angle = cfootr+30  # lift up outward
+        foot_right.angle = cfootr + 30  # lift up outward
         note = note + 2
         simpleio.tone(PIEZO_PIN, melody2[note], 0.5)
         note = note + 2
         simpleio.tone(PIEZO_PIN, melody2[note], 0.5)
-        leg_right.angle = clegr-50  # kick
+        leg_right.angle = clegr - 50  # kick
         time.sleep(0.1)
         note = note + 2
         gc.collect()
         loading(1, "GIF/gif3/")
         splash.pop(0)
 
-        for angle in range(clegr-50, clegr+21, 7):  # shake
+        for angle in range(clegr - 50, clegr + 21, 7):  # shake
             leg_right.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
         note = note + 2
         gc.collect()
-        for angle in range(clegr+20, clegr-51, -7):  # shake
+        for angle in range(clegr + 20, clegr - 51, -7):  # shake
             leg_right.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
         gc.collect()
@@ -740,17 +884,17 @@ def move_set3():
             note = note + 2
             simpleio.tone(PIEZO_PIN, melody2[note], 0.5)
         gc.collect()
-    # --------------------
+        # --------------------
         loading(0, "GIF/gif3/")
         splash.pop(0)
         # left up
-        note = note+2
+        note = note + 2
         gc.collect()
-        for angle in range(cfootl, cfootl+81, 40):
+        for angle in range(cfootl, cfootl + 81, 40):
             foot_left.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
         gc.collect()
-        for angle in range(cfootr, cfootr+61, 20):
+        for angle in range(cfootr, cfootr + 61, 20):
             foot_right.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
         gc.collect()
@@ -759,27 +903,27 @@ def move_set3():
         if count == 0:
             simpleio.tone(PIEZO_PIN, melody2[note], 0.25)
         elif count == 1:
-            note = note+2
+            note = note + 2
             simpleio.tone(PIEZO_PIN, melody2[note], 0.25)
 
-        foot_left.angle = cfootl-30  # lift up outward
+        foot_left.angle = cfootl - 30  # lift up outward
         note = note + 2
         simpleio.tone(PIEZO_PIN, melody2[note], 0.5)
         note = note + 2
         simpleio.tone(PIEZO_PIN, melody2[note], 0.5)
-        leg_left.angle = clegl+50  # kick
+        leg_left.angle = clegl + 50  # kick
         time.sleep(0.1)
-        note = note+2
+        note = note + 2
         gc.collect()
         loading(1, "GIF/gif3/")
         splash.pop(0)
 
-        for angle in range(clegl+50, clegl-21, -7):  # shake
+        for angle in range(clegl + 50, clegl - 21, -7):  # shake
             leg_left.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
-        note = note+2
+        note = note + 2
         gc.collect()
-        for angle in range(clegl-20, clegl+51, 7):  # shake
+        for angle in range(clegl - 20, clegl + 51, 7):  # shake
             leg_left.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
         gc.collect()
@@ -789,10 +933,10 @@ def move_set3():
 
         loading(0, "GIF/gif3/")
         splash.pop(0)
-        count = count+1
+        count = count + 1
         gc.collect()
         if count == 2:
-            #move3 = False
+            # move3 = False
             break
 
     gc.collect()
@@ -854,7 +998,7 @@ def move_set4():
         loading(0, "GIF/gif4/")
         splash.pop(0)
         resetto90()
-        count = count+1
+        count = count + 1
         if count == 3:
             note = note + 2
             for i in range(5):
@@ -904,9 +1048,8 @@ def move_set4():
     gc.collect()
     splash.pop()
 
+
 # -----------------------------------MOVE 5---------------------------------------------
-
-
 def move_set5():
     note = 0
     count = 0
@@ -920,15 +1063,15 @@ def move_set5():
             if count != 0 or a != 0:
                 note = note + 2
             for i in range(5):
-                foot_left.angle = foot_left.angle + 12  # 抬左
-                foot_right.angle = foot_right.angle + 4  # 低右
+                foot_left.angle = foot_left.angle + 12
+                foot_right.angle = foot_right.angle + 4
                 simpleio.tone(PIEZO_PIN, melody1[note], 0.05)
             gc.collect()
             if a == 1:
                 note = note + 2
             for i in range(5):
-                foot_left.angle = foot_left.angle + 4  # 抬左
-                foot_right.angle = foot_right.angle - 12  # 抬右
+                foot_left.angle = foot_left.angle + 4
+                foot_right.angle = foot_right.angle - 12
                 simpleio.tone(PIEZO_PIN, melody1[note], 0.05)
             gc.collect()
             loading(1, "GIF/gif5/")
@@ -1011,17 +1154,17 @@ def move_set6():
         # turn left
         time.sleep(0.5)
 
-        for angle in range(cfootr, cfootr-81, -40):
+        for angle in range(cfootr, cfootr - 81, -40):
             foot_right.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
-        for angle in range(cfootl, cfootl-60, -20):
+        for angle in range(cfootl, cfootl - 60, -20):
             foot_left.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
         gc.collect()
         #  \\
 
         simpleio.tone(PIEZO_PIN, melody2[note], 0.1)
-        foot_right.angle = cfootr+50  # lift up outward
+        foot_right.angle = cfootr + 50  # lift up outward
         simpleio.tone(PIEZO_PIN, melody2[note], 0.1)
 
         loading(1, "/GIF/gif6/")
@@ -1030,7 +1173,7 @@ def move_set6():
         for i in range(4):
             if i != 0:
                 note = note + 2
-            for angle in range(clegr-70, clegr+1, 20):  # kick
+            for angle in range(clegr - 70, clegr + 1, 20):  # kick
                 leg_right.angle = angle
                 simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
             if i != 0:
@@ -1041,7 +1184,7 @@ def move_set6():
                 simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
             if i == 0 or i == 2:
                 note = note + 2
-            for angle in range(40, clegl+1, 5):  # get up
+            for angle in range(40, clegl + 1, 5):  # get up
                 leg_left.angle = angle
                 simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
             gc.collect()
@@ -1058,15 +1201,15 @@ def move_set6():
         # turn right
         time.sleep(0.2)
         note = note + 2
-        for angle in range(cfootl, cfootl+81, 40):
+        for angle in range(cfootl, cfootl + 81, 40):
             foot_left.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
-        for angle in range(cfootr, cfootr+61, 20):
+        for angle in range(cfootr, cfootr + 61, 20):
             foot_right.angle = angle
             simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
         gc.collect()
         simpleio.tone(PIEZO_PIN, melody2[note], 0.1)
-        foot_left.angle = cfootl-50  # lift up outward
+        foot_left.angle = cfootl - 50  # lift up outward
         simpleio.tone(PIEZO_PIN, melody2[note], 0.1)
         gc.collect()
         loading(0, "/GIF/gif6/")
@@ -1076,7 +1219,7 @@ def move_set6():
         for i in range(4):
             if i != 0:
                 note = note + 2
-            for angle in range(clegl+70, clegl-1, -20):  # kick
+            for angle in range(clegl + 70, clegl - 1, -20):  # kick
                 leg_left.angle = angle
                 simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
             if i != 0 and i != 2:
@@ -1086,12 +1229,12 @@ def move_set6():
                 note = note + 2
                 simpleio.tone(PIEZO_PIN, melody2[note], 0.25)
             note = note + 2
-            for angle in range(clegr, clegr+51, 5):  # bend down
+            for angle in range(clegr, clegr + 51, 5):  # bend down
                 leg_right.angle = angle
                 simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
             if i != 3:
                 note = note + 2
-            for angle in range(clegr+50, clegr-1, -5):  # get up
+            for angle in range(clegr + 50, clegr - 1, -5):  # get up
                 leg_right.angle = angle
                 simpleio.tone(PIEZO_PIN, melody2[note], 0.05)
             gc.collect()
@@ -1110,10 +1253,8 @@ def move_set6():
     gc.collect()
     splash.pop()
 
-# -----------------------------END OF MOVE SETS FUNCTIONS SECTION----------------------------------
 
-
-# ------------SET UP KEYPAD--------------
+"""------------------------ADDITIONAL FUNCTIONALITY: KEYPAD SET UP AND HELPER FUNCTIONS-----------------------------"""
 # latch_pin = digitalio.DigitalInOut(board.D5) #change to another pin if D5 is not working
 # sr = adafruit_74hc595.ShiftRegister74HC595(board.SPI(), latch_pin)
 
@@ -1126,14 +1267,15 @@ cols = [digitalio.DigitalInOut(x) for x in (board.TX, board.SCL, board.A5)]
 keys = ((1, 2, 3), (4, 5, 6), (7, 8, 9))
 
 keypad = adafruit_matrixkeypad.Matrix_Keypad(rows, cols, keys)
-# ---------------------------------------
-
-# ----------------------------HELPER FUNCTIONS----------------------------------------------------
-# helper function to perform individual move 3 times
 
 
 def performing_individual(move):
-    # perform 3 times
+    """
+        helper function to perform individual dance moves
+        :param move: the reference number of a dance move
+                     requires: integer in range 1 - 6
+    """
+
     for i in range(0, 1, 1):
         if (move == 1):
             move_display("Tip top")
@@ -1159,11 +1301,14 @@ def performing_individual(move):
             move_display("Nodding")
             gc.collect()
             move_set6()
-            
 
-# helper function to perform user move sequence
 
 def performing_sequence(move_sequence):
+    """
+        helper function to perform user move sequence
+        :param move_sequence: the array of dance moves defined by user input
+    """
+
     number_of_move = min(len(move_sequence), 10)
     for i in range(0, number_of_move, 1):
         if (move_sequence[i] == 1):
@@ -1190,12 +1335,19 @@ def performing_sequence(move_sequence):
             move_display("Nodding")
             gc.collect()
             move_set6()
-
-# helper function to perform all moves sequentially in the direction specified by user
+        gc.collect()
 
 
 def performing_all(direction):
-    if (direction == 'f'):
+    """
+        helper function to perform all moves sequentially in the direction specified by user
+        :param direction: the direction of dance moves from ascending or descending order
+                          requires: string 'f' forward or 'r' for reverse
+        f: perform moves in forward direction
+        r: perform moves in reverse direction
+    """
+
+    if direction == 'f':
         move_set1()
         gc.collect()
         move_set2()
@@ -1208,7 +1360,7 @@ def performing_all(direction):
         gc.collect()
         move_set6()
         gc.collect()
-    elif (direction == 'r'):
+    elif direction == 'r':
         move_set6()
         move_set5()
         move_set4()
@@ -1216,28 +1368,29 @@ def performing_all(direction):
         move_set2()
         move_set1()
 
-# ----------------------------------------END OF HELPER FUNCTIONS SECTION----------------------------------------------
 
+"""----------------------------------------------------MAIN PROGRAM--------------------------------------------------"""
+"""
+    User can choose for the robot to perform either 1 move, a sequence of move (order specified by user), 
+    perform all the move sets at once(reverse or forward), or play a mini movie
+    At main menu on the LCD, press 1 or 2 to choose between perform sequence/individual mode and perform all mode
+    Choose 1: navigate to sub menu 1
+    Sub menu 1:
+        - Selecting keys from 1 -> 6 to choose the corresponding move set
+        - Choosing more than once to customize the sequence of move to perform (choose one to perform only one move)
+        - After choosing, press key '7' to start performing
+        - Pressing key '9' to go back to main menu
+ 
+    Choose 2: navigate to sub menu 2:
+    Sub menu 2:
+        - Pressing key '7' to perform all moves (1->6)
+        - Pressing key '8' to play Snoopy mini movie
+        - Pressing key '9' to go back to the main menu
 
-# -------------------------------------------------------MAIN PROGRAM--------------------------------------------------
-# User can choose for the robot to perform either 1 move, a sequence of move (order specified by user) or perfroming all the move sets at once(reverse or forward)
-# At main menu on the LCD, press 1 or 2 to choose between perform sequence/individual mode and perform all mode
-# Choose 1: navigate to sub menu 1
-#    Sub menu 1:
-#       - Selecting keys from 1 -> 6 to choose the corresponding move set
-#       - Choosing more than once to customize the sequence of move to perform (choose one to perform only one move)
-#       - After choosing, presssing key '7' to start performing
-#       - Pressing key '9' to go back to main menu
-#
-# Choose 2: navigate to sub menu 2:
-#    Sub menu 2:
-#       - Pressing key '7' to perfrom all moves in the forward direction (1 -> 6)
-#       - Pressing key '8' to perform all moves in the reverse direction (6 -> 1)
-#       - Pressing key '9' to go back to the main menu
+    At the main menu, pressing key '9' to turn off the robot
+"""
 
-# At the main menu, pressing key '9' to turn off the robot
-
-
+# set up array to store user input and the main menu
 move_sequence = []
 main_menu_display()
 gc.collect()
@@ -1409,4 +1562,5 @@ while True:
         gc.collect()
     gc.collect()
 
-# -------------------------------END OF MAIN PROGRAM---------------------------------------
+"""--------------------------------------------END OF MAIN PROGRAM--------------------------------------------------"""
+
